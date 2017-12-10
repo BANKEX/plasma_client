@@ -503,8 +503,14 @@
 </span></a>
             <div class="popup__title">Split Deposit&nbsp;<span>2568 • 0.2569874523 ETH</span>&nbsp;into two</div>
             <div class="popup__row">
-              <input type="text" placeholder="First amount" class="popup__input">
-              <input type="text" placeholder="Second amount" class="popup__input"><a href="#" class="popup__btn">Make even halves</a>
+              <div class="popup__input">
+                <input type="text" placeholder="">
+                <div class="label">First amount</div>
+              </div>
+              <div class="popup__input">
+                <input type="text" placeholder="">
+                <div class="label">Second amount</div>
+              </div><a href="#" class="popup__btn">Make even halves</a>
             </div>
             <input type="submit" value="Split Deposit" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
           </div>
@@ -520,7 +526,10 @@
 </svg>
 </span></a>
             <div class="popup__title">withdraw Deposit&nbsp;<span>2568 • 0.2569874523 ETH</span></div>
-            <input type="text" placeholder="ETH Wallet Address" class="popup__input popup__input-withdraw">
+            <div class="popup__input popup__input-withdraw">
+              <input type="text" placeholder="">
+              <div class="label">ETH Wallet Address</div>
+            </div>
             <input type="submit" value="Withdraw Deposit" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
           </div>
         </div>
@@ -535,7 +544,10 @@
 </svg>
 </span></a>
             <div class="popup__title">Transfer Deposit&nbsp;<span>2568 • 0.2569874523 ETH</span></div>
-            <input type="text" placeholder="ETH Wallet Address" class="popup__input popup__input-transfer">
+            <div class="popup__input popup__input-transfer">
+              <input type="text" placeholder="">
+              <div class="label">ETH Wallet Address</div>
+            </div>
             <input type="submit" value="Transfer Deposit" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
           </div>
         </div>
@@ -550,8 +562,14 @@
 </svg>
 </span></a>
             <div class="popup__title">Add ETH Deposit to Plasma</div>
-            <input type="text" placeholder="ETH Amount" class="popup__input popup__input-add">
-            <input type="text" placeholder="Your ETH wallet" class="popup__input popup__input-add">
+            <div class="popup__input popup__input-add">
+              <input type="text" placeholder="">
+              <div class="label">ETH Amount</div>
+            </div>
+            <div class="popup__input popup__input-add">
+              <input type="text" placeholder="">
+              <div class="label">Your ETH wallet</div>
+            </div>
             <input type="submit" value="Add ETH to Plasma" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
           </div>
         </div>
