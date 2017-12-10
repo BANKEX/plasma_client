@@ -1,0 +1,11 @@
+.idea
+.idea/*
+bower_components/*
+node_modules/*
+
+
+# OS
+.DS_Store
+ehthumbs.db
+Icon?
+Thumbs.db
