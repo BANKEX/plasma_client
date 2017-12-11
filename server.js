@@ -9,15 +9,14 @@ const config = require('./config.js');
 
 const app = connect()
 
-console.log(config.plasma_host);
-
 app.use('/api', (req, res) => {
-
-    // console.log(req)
 
     var _path = req.originalUrl.split('/api/')[1]
 
-    request.get(config.plasma_host + _path).pipe(res)
+    request.get({uri: config.plasma_host + _path, timeout: 2000}).on('error', e=>{
+        res.writeHead(408)
+        res.end()
+    }).pipe(res)
 
 });
 

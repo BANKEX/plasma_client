@@ -2323,6 +2323,10 @@ h6, .h6 {
     font-weight: 600;
     text-transform: uppercase; }
 
+.history .transaction__number {
+  width: 300px;
+}
+
 .history {
   padding: 32px 100px;
   background: #202326;
@@ -2809,7 +2813,7 @@ yx-axis
     font-weight: 600;
     text-transform: uppercase; }
   .transaction__sum {
-    width: 300px;
+    width: 100px; // changed
     font-weight: 600;
     text-transform: uppercase; }
   .transaction__date {

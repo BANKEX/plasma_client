@@ -11463,21 +11463,37 @@ $(function () {
 });
 
 
+function setActiveDeposit(event) {
+
+	active_deposit = all_deposits[$(event.target).closest('.transaction').index()]
+}
+
+
+function closePopup() {
+
+	$('body').removeClass('popup-open');
+    $('.popup').removeClass('open');
+}
+
+function openPopup(classname, event) {
+
+	$('body').addClass('popup-open');
+	$('.popup').removeClass('open');
+	$(classname).addClass('open');
+
+	setActiveDeposit(event)
+}
 
 
 $(function () {
 
 	$('.transactions').on('click', '.transactions__add', function(e){
-        $('body').addClass('popup-open');
-        $('.popup').removeClass('open');
-        $('.popup-add').addClass('open');
+		openPopup('.popup-add', e)
         e.preventDefault();
     });
 
     $('.transactions').on('click', '.transaction__merge', function(e){
-        $('body').addClass('popup-open');
-        $('.popup').removeClass('open');
-        $('.popup-merge').addClass('open');
+        openPopup('.popup-merge', e)
         e.preventDefault();
     });
 
@@ -11492,23 +11508,17 @@ $(function () {
     })
 
     $('.transactions').on('click', '.transaction__split', function(e){
-        $('body').addClass('popup-open');
-        $('.popup').removeClass('open');
-        $('.popup-split').addClass('open');
+        openPopup('.popup-split', e)
         e.preventDefault();
     });
 
     $('.transactions').on('click', '.transaction__transfer', function(e){
-        $('body').addClass('popup-open');
-        $('.popup').removeClass('open');
-        $('.popup-transfer').addClass('open');
+        openPopup('.popup-transfer', e)
         e.preventDefault();
     });
 
     $('.transactions').on('click', '.transaction__withdraw', function(e){
-        $('body').addClass('popup-open');
-        $('.popup').removeClass('open');
-        $('.popup-withdraw').addClass('open');
+        openPopup('.popup-withdraw', e)
         e.preventDefault();
     });
 });

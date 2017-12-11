@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru" class="no-js">
   <head>
-    <title>Каталог</title>
+    <title>Plasma</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -296,7 +296,7 @@
               </div>
               <div class="tabs-content">
                 <div id="deposits" class="tabs-panel is-active">
-                  <div class="history__list">
+                  <div class="history__list deposit">
                               <div class="transaction">
                                 <div class="transaction__number">Deposit&nbsp;232
                                 </div>
@@ -431,27 +431,6 @@
                 </div>
                 <div id="inc-withdrawals" class="tabs-panel">
                   <div class="history__list">
-                              <div class="transaction">
-                                <div class="transaction__number">Deposit&nbsp;232
-                                </div>
-                                <div class="transaction__sum">0.2568547852&nbsp;ETH
-                                </div>
-                                <div class="transaction__date">Dec 08 2017</div>
-                              </div>
-                              <div class="transaction">
-                                <div class="transaction__number">Deposit&nbsp;232
-                                </div>
-                                <div class="transaction__sum">257.022488&nbsp;ETH
-                                </div>
-                                <div class="transaction__date">Dec 08 2017</div>
-                              </div>
-                              <div class="transaction">
-                                <div class="transaction__number">Deposit&nbsp;232
-                                </div>
-                                <div class="transaction__sum">100&nbsp;ETH
-                                </div>
-                                <div class="transaction__date">Dec 08 2017</div>
-                              </div>
                   </div>
                 </div>
               </div>
@@ -467,7 +446,7 @@
       <div class="container">
         <div class="footer__inner">
           <div class="footer__copyright">© 2017 bankex</div>
-          <div class="footer__link">Go to&nbsp;<a href="#">bankex.com</a></div>
+          <div class="footer__link">Go to&nbsp;<a href="//bankex.com">bankex.com</a></div>
         </div>
       </div>
     </div>
@@ -510,7 +489,7 @@
               <div class="popup__input">
                 <input type="text" placeholder="">
                 <div class="label">Second amount</div>
-              </div><a href="#" class="popup__btn">Make even halves</a>
+              </div><a href="#" class="popup__btn make_halves">Make even halves</a>
             </div>
             <input type="submit" value="Split Deposit" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
           </div>
@@ -563,13 +542,13 @@
 </span></a>
             <div class="popup__title">Add ETH Deposit to Plasma</div>
             <div class="popup__input popup__input-add">
-              <input type="text" placeholder="">
+              <input class="value" type="text" placeholder="">
               <div class="label">ETH Amount</div>
             </div>
-            <div class="popup__input popup__input-add">
-              <input type="text" placeholder="">
-              <div class="label">Your ETH wallet</div>
-            </div>
+            <!-- <div class="popup__input popup__input-add"> -->
+              <!-- <input type="text" class="address" placeholder=""> -->
+              <!-- <div class="label address_label">Your ETH wallet</div> -->
+            <!-- </div> -->
             <input type="submit" value="Add ETH to Plasma" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
           </div>
         </div>
@@ -605,8 +584,28 @@ each t in transactions
 </script>
 
 
+<script type="template/pug" id="history_list_deposit">
+each t in transactions
+    .transaction
+        .transaction__number=t.index
+        .transaction__sum=t.eth + " ETH"
+        .transaction__date=t.from
+</script>
+
+<script type="template/pug" id="history_list_withdrawal">
+each t in transactions
+    .transaction
+        .transaction__number=t.index
+        .transaction__sum=t.eth + " ETH"
+        .transaction__date=t.beneficiary
+</script>
+
+
   <script src="/assets/js/app.js"></script>
+  <script src="/assets/js/plasma_abi.js"></script>
+
   <script src="/vendor/pug.js"></script>
+  <script src="/vendor/web3.min.js"></script>
 
   <script src="/assets/js/logic.js"></script>
 </html>
