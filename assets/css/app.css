@@ -2805,7 +2805,7 @@ yx-axis
     display: inline-block;
     font-size: 14px; }
   .transaction__number {
-    width: 190px;
+    width: 490px; // changed
     font-weight: 600;
     text-transform: uppercase; }
   .transaction__sum {

@@ -1,0 +1,25 @@
+{
+  "name": "annybody.bitbucket.io",
+  "version": "0.0.5",
+  "description": "plasma interfce",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://annybody@bitbucket.org/annybody/annybody.bitbucket.io.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/annybody/annybody.bitbucket.io#readme",
+  "dependencies": {
+    "connect": "^3.6.5",
+    "express": "^4.16.2",
+    "http-server": "^0.10.0",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2",
+    "serve-static": "^1.13.1"
+  }
+}
