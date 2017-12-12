@@ -3,7 +3,7 @@ var web3 = web3 || ethereumProvider;
 
 var localWeb3; // Web3 and web3 are globals
 
-var plasma_host_address = "0x158cb5485ea2e7fe03845d45c40c63469814bd9a";
+var plasma_host_address = "0xd8AC480331870c5764b5430F854926b1cfd1d8B1";
 
 const pug = require('pug')
 
@@ -57,7 +57,7 @@ $(() => {
 
         if (err) {throw err}
 
-        const plasma_contract = new localWeb3.eth.Contract(plasma_abi, "0x158cb5485ea2e7fe03845d45c40c63469814bd9a", {from: address});
+        const plasma_contract = new localWeb3.eth.Contract(plasma_abi, plasma_host_address, {from: address});
 
 
         getTransactions(address).then(utxos=> {
