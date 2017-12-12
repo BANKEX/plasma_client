@@ -16,6 +16,9 @@ app.use('/api', async (req, res) => {
 
     var _path = req.originalUrl.split('/api/')[1]
     const requestType = req.method;
+
+    // console.log(requestType + ": " + config.plasma_host + _path);
+
     if (requestType == "GET") {
         request.get({uri: config.plasma_host + _path, timeout: 2000}).on('error', e=>{
             res.writeHead(408)

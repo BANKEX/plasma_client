@@ -7,15 +7,15 @@ var plasma_host_address = "0xd8AC480331870c5764b5430F854926b1cfd1d8B1";
 
 const pug = require('pug')
 
-const initWeb3 = (callback) => localWeb3.eth.net.getId((error, id) => {    
+const initWeb3 = (callback) => localWeb3.eth.net.getId((error, id) => {
     if (id != 4) {
         alert("Requires Rinkeby test network. Change network in Metamask and refresh the page.")
         callback(error, null);
         return
-    } 
+    }
     localWeb3.eth.getAccounts( (error, res) => callback(error, res[0]))});
 
-const API_PREFIX = "/"
+const API_PREFIX = "/api/"
 
 const compose_plasma_tx_id = tx => [tx.blockNumber, tx.txNumberInBlock, tx.outputNumberInTransaction, tx.to].join('|')
 
@@ -85,12 +85,15 @@ $(() => {
 
         const plasma_contract = new localWeb3.eth.Contract(plasma_abi, plasma_host_address, {from: address});
 
+        // console.log(address);
 
         getTransactions(address).then(utxos=> {
+
 
             utxos.forEach(t=>{
                 t.eth = localWeb3.utils.fromWei(t.value);
                 t.id  = compose_plasma_tx_id(t)
+                t.short_id = t.id.slice(0,12) + '...' + t.id.slice(-3)
             })
 
             all_deposits = utxos
@@ -136,8 +139,11 @@ $(() => {
 
         $('.make_halves').on('click', event => {
 
-            console.log(active_deposit);
-            // console.log(event);
+            let first  = active_deposit.eth/2
+            let second = active_deposit.eth - first
+
+            $('.popup').find('.output1').find('#split_amount').focus().val(first).blur()
+            $('.popup').find('.output2').find('#split_amount').focus().val(second).blur()
 
         })
 
@@ -145,8 +151,7 @@ $(() => {
 
             let eth = $(event.target).closest('.popup').find('.value').val()
 
-            plasma_contract.methods.deposit().send({value: localWeb3.utils.toWei(eth)}, res=>{
-                closePopup()})
+            plasma_contract.methods.deposit().send({value: localWeb3.utils.toWei(eth)}, closePopup)
         })
 
         $('.popup-split').on('click', '.popup__button', event => {
@@ -168,7 +173,7 @@ $(() => {
                             address2 == undefined)
                             {
                                 closePopup();
-                            }      
+                            }
                         am1 = localWeb3.utils.toWei(am1)
                         am2 = localWeb3.utils.toWei(am2)
                         am1 = localWeb3.utils.toBN(am1)

@@ -11473,6 +11473,8 @@ function closePopup() {
 
 	$('body').removeClass('popup-open');
     $('.popup').removeClass('open');
+
+    $('.popup input[type=text]').val('').focus().blur();
 }
 
 function openPopup(classname, event) {
@@ -11482,6 +11484,10 @@ function openPopup(classname, event) {
 	$(classname).addClass('open');
 
 	setActiveDeposit(event)
+
+
+
+	$(classname).find('.popup__title span').html(active_deposit.short_id + " " + active_deposit.eth + ' ETH')
 }
 
 
@@ -11499,12 +11505,11 @@ $(function () {
 
     $('.popup__close').click(function(e){
         e.preventDefault();
-        $('body').removeClass('popup-open');
-        $('.popup').removeClass('open');
+		closePopup()
     });
     $('.popup__cancel').click(function(e){
         e.preventDefault();
-        $('.popup__close').click();
+		closePopup()
     })
 
     $('.transactions').on('click', '.transaction__split', function(e){
