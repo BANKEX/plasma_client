@@ -49,7 +49,7 @@
               </div>
               <div class="transactions__list">
                           <div class="transaction">
-                            <div class="transaction__number">Deposit&nbsp;232
+                            <div class="transaction__number">output&nbsp;232
                             </div>
                             <div class="transaction__sum">0.2568547852&nbsp;ETH
                             </div>
@@ -77,7 +77,7 @@
 </span></div>
                           </div>
                           <div class="transaction">
-                            <div class="transaction__number">Deposit&nbsp;232
+                            <div class="transaction__number">output&nbsp;232
                             </div>
                             <div class="transaction__sum">257.022488&nbsp;ETH
                             </div>
@@ -105,7 +105,7 @@
 </span></div>
                           </div>
                           <div class="transaction">
-                            <div class="transaction__number">Deposit&nbsp;232
+                            <div class="transaction__number">output&nbsp;232
                             </div>
                             <div class="transaction__sum">100&nbsp;ETH
                             </div>
@@ -133,7 +133,7 @@
 </span></div>
                           </div>
                           <div class="transaction">
-                            <div class="transaction__number">Deposit&nbsp;232
+                            <div class="transaction__number">output&nbsp;232
                             </div>
                             <div class="transaction__sum">10,255.2556455&nbsp;ETH
                             </div>
@@ -161,7 +161,7 @@
 </span></div>
                           </div>
                           <div class="transaction">
-                            <div class="transaction__number">Deposit&nbsp;232
+                            <div class="transaction__number">output&nbsp;232
                             </div>
                             <div class="transaction__sum">0.2568547852&nbsp;ETH
                             </div>
@@ -189,7 +189,7 @@
 </span></div>
                           </div>
                           <div class="transaction">
-                            <div class="transaction__number">Deposit&nbsp;232
+                            <div class="transaction__number">output&nbsp;232
                             </div>
                             <div class="transaction__sum">257.022488&nbsp;ETH
                             </div>
@@ -217,7 +217,7 @@
 </span></div>
                           </div>
                           <div class="transaction">
-                            <div class="transaction__number">Deposit&nbsp;232
+                            <div class="transaction__number">output&nbsp;232
                             </div>
                             <div class="transaction__sum">100&nbsp;ETH
                             </div>
@@ -245,7 +245,7 @@
 </span></div>
                           </div>
                           <div class="transaction">
-                            <div class="transaction__number">Deposit&nbsp;232
+                            <div class="transaction__number">output&nbsp;232
                             </div>
                             <div class="transaction__sum">10,255.2556455&nbsp;ETH
                             </div>
@@ -460,14 +460,14 @@
     <path fill="#444" fill-rule="evenodd" d="M13.7.3c-.4-.4-1-.4-1.4 0L7 5.6 1.7.3C1.3-.1.7-.1.3.3c-.4.4-.4 1 0 1.4L5.6 7 .3 12.3c-.4.4-.4 1 0 1.4.2.2.4.3.7.3.3 0 .5-.1.7-.3L7 8.4l5.3 5.3c.2.2.5.3.7.3.2 0 .5-.1.7-.3.4-.4.4-1 0-1.4L8.4 7l5.3-5.3c.4-.4.4-1 0-1.4" opacity=".5"/>
 </svg>
 </span></a>
-            <div class="popup__title">Merge Deposit&nbsp;<span>2568 • 0.2569874523 ETH</span>&nbsp;with another</div>
+            <div class="popup__title">Merge outputs&nbsp;<span>2568 • 0.2569874523 ETH</span>&nbsp;with another</div>
             <select class="popup__select">
               <option></option>
-              <option>Deposit 2356</option>
-              <option>Deposit 2357</option>
-              <option>Deposit 2358</option>
+              <option>Output 2356</option>
+              <option>Output 2357</option>
+              <option>Output 2358</option>
             </select>
-            <input type="submit" value="Merge Deposits" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
+            <input type="submit" value="Merge outputs" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
           </div>
         </div>
       </div>
@@ -480,18 +480,28 @@
     <path fill="#444" fill-rule="evenodd" d="M13.7.3c-.4-.4-1-.4-1.4 0L7 5.6 1.7.3C1.3-.1.7-.1.3.3c-.4.4-.4 1 0 1.4L5.6 7 .3 12.3c-.4.4-.4 1 0 1.4.2.2.4.3.7.3.3 0 .5-.1.7-.3L7 8.4l5.3 5.3c.2.2.5.3.7.3.2 0 .5-.1.7-.3.4-.4.4-1 0-1.4L8.4 7l5.3-5.3c.4-.4.4-1 0-1.4" opacity=".5"/>
 </svg>
 </span></a>
-            <div class="popup__title">Split Deposit&nbsp;<span>2568 • 0.2569874523 ETH</span>&nbsp;into two</div>
-            <div class="popup__row">
+            <div class="popup__title">Split output&nbsp;<span>2568 • 0.2569874523 ETH</span>&nbsp;into two</div>
+            <div class="popup__row output1">
               <div class="popup__input">
-                <input type="text" placeholder="">
-                <div class="label">First amount</div>
+                <input type="text" placeholder="" id="split_receiver">
+                <div class="label">First receiver</div>
               </div>
               <div class="popup__input">
-                <input type="text" placeholder="">
-                <div class="label">Second amount</div>
+                <input type="text" placeholder="" id="split_amount">
+                <div class="label">First amount</div>
               </div><a href="#" class="popup__btn make_halves">Make even halves</a>
             </div>
-            <input type="submit" value="Split Deposit" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
+            <div class="popup__row output2" >
+                <div class="popup__input">
+                  <input type="text" placeholder="" id="split_receiver">
+                  <div class="label">Second receiver</div>
+                </div>
+                <div class="popup__input">
+                  <input type="text" placeholder="" id="split_amount">
+                  <div class="label">Second amount</div>
+                </div>
+              </div>
+            <input type="submit" value="Split output" class="popup__button send_split"><a href="#" class="popup__cancel">Cancel</a>
           </div>
         </div>
       </div>
@@ -504,12 +514,12 @@
     <path fill="#444" fill-rule="evenodd" d="M13.7.3c-.4-.4-1-.4-1.4 0L7 5.6 1.7.3C1.3-.1.7-.1.3.3c-.4.4-.4 1 0 1.4L5.6 7 .3 12.3c-.4.4-.4 1 0 1.4.2.2.4.3.7.3.3 0 .5-.1.7-.3L7 8.4l5.3 5.3c.2.2.5.3.7.3.2 0 .5-.1.7-.3.4-.4.4-1 0-1.4L8.4 7l5.3-5.3c.4-.4.4-1 0-1.4" opacity=".5"/>
 </svg>
 </span></a>
-            <div class="popup__title">withdraw Deposit&nbsp;<span>2568 • 0.2569874523 ETH</span></div>
+            <div class="popup__title">Withdraw output&nbsp;<span>2568 • 0.2569874523 ETH</span></div>
             <div class="popup__input popup__input-withdraw">
               <input type="text" placeholder="">
               <div class="label">ETH Wallet Address</div>
             </div>
-            <input type="submit" value="Withdraw Deposit" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
+            <input type="submit" value="Withdraw output" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
           </div>
         </div>
       </div>
@@ -522,12 +532,12 @@
     <path fill="#444" fill-rule="evenodd" d="M13.7.3c-.4-.4-1-.4-1.4 0L7 5.6 1.7.3C1.3-.1.7-.1.3.3c-.4.4-.4 1 0 1.4L5.6 7 .3 12.3c-.4.4-.4 1 0 1.4.2.2.4.3.7.3.3 0 .5-.1.7-.3L7 8.4l5.3 5.3c.2.2.5.3.7.3.2 0 .5-.1.7-.3.4-.4.4-1 0-1.4L8.4 7l5.3-5.3c.4-.4.4-1 0-1.4" opacity=".5"/>
 </svg>
 </span></a>
-            <div class="popup__title">Transfer Deposit&nbsp;<span>2568 • 0.2569874523 ETH</span></div>
+            <div class="popup__title">Transfer output&nbsp;<span>2568 • 0.2569874523 ETH</span></div>
             <div class="popup__input popup__input-transfer">
               <input type="text" placeholder="">
               <div class="label">ETH Wallet Address</div>
             </div>
-            <input type="submit" value="Transfer Deposit" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
+            <input type="submit" value="Transfer output" class="popup__button"><a href="#" class="popup__cancel">Cancel</a>
           </div>
         </div>
       </div>

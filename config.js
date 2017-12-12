@@ -1,8 +1,8 @@
 
 module.exports = {
 
-    plasma_contract_address: "0x158cb5485ea2e7fe03845d45c40c63469814bd9a",
-    plasma_host: 'http://192.168.31.16:8000/'
+    plasma_contract_address: "0xd8AC480331870c5764b5430F854926b1cfd1d8B1",
+    plasma_host: 'https://plasma.bankex.com/'
 
 }
 

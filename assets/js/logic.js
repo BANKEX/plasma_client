@@ -3,11 +3,17 @@ var web3 = web3 || ethereumProvider;
 
 var localWeb3; // Web3 and web3 are globals
 
-var plasma_host_address = "0x158cb5485ea2e7fe03845d45c40c63469814bd9a";
+var plasma_host_address = "0xd8AC480331870c5764b5430F854926b1cfd1d8B1";
 
 const pug = require('pug')
 
-const initWeb3 = (callback) => localWeb3.eth.getAccounts( (error, res) => callback(error, res[0]) );
+const initWeb3 = (callback) => localWeb3.eth.net.getId((error, id) => {    
+    if (id != 4) {
+        alert("Requires Rinkeby test network. Change network in Metamask and refresh the page.")
+        callback(error, null);
+        return
+    } 
+    localWeb3.eth.getAccounts( (error, res) => callback(error, res[0]))});
 
 const API_PREFIX = "/api/"
 
@@ -27,6 +33,26 @@ const getHistoryWithdraw = addr => $.getJSON(API_PREFIX + 'plasmaParent/allWithd
     return res.withdrawRecords
 })
 
+const sendTXforSerialization = (req, cb) => $.ajax({
+  url:API_PREFIX + 'createTX',
+  type:"POST",
+  data:req,
+  data: JSON.stringify(req),
+  contentType:"application/json; charset=utf-8",
+  dataType:"json",
+  success: cb
+});
+
+const sendSignedTX = (req, cb) => $.ajax({
+  url:API_PREFIX + 'sendSignedTX',
+  type:"POST",
+  data:req,
+  data: JSON.stringify(req),
+  contentType:"application/json; charset=utf-8",
+  dataType:"json",
+  success: cb
+});
+
 const sendTX = (params) => {
 
     $.post({
@@ -41,7 +67,7 @@ const sendTX = (params) => {
 const scrollbar_params = { axis:"y", mouseWheel:{enable: true,preventDefault:true}}
 
 
-const all_deposits = []
+var all_deposits = []
 
 $(() => {
 
@@ -57,7 +83,7 @@ $(() => {
 
         if (err) {throw err}
 
-        const plasma_contract = new localWeb3.eth.Contract(plasma_abi, "0x158cb5485ea2e7fe03845d45c40c63469814bd9a", {from: address});
+        const plasma_contract = new localWeb3.eth.Contract(plasma_abi, plasma_host_address, {from: address});
 
 
         getTransactions(address).then(utxos=> {
@@ -108,7 +134,6 @@ $(() => {
 
         // })
 
-
         $('.make_halves').on('click', event => {
 
             console.log(active_deposit);
@@ -123,6 +148,77 @@ $(() => {
             plasma_contract.methods.deposit().send({value: localWeb3.utils.toWei(eth)}, res=>{
                 closePopup()})
         })
+
+        $('.popup-split').on('click', '.popup__button', event => {
+                        const deposit = active_deposit
+                        if (deposit == undefined) {
+                            closePopup();
+                        }
+                        const blockNumber = deposit.blockNumber
+                        const txNumberInBlock = deposit.txNumberInBlock
+                        const outputNumberInTransaction = deposit.outputNumberInTransaction
+                        const depositAmount = localWeb3.utils.toBN(deposit.value)
+                        let am1 = $(event.target).closest('.popup').find('.output1').find('#split_amount').val()
+                        let am2 = $(event.target).closest('.popup').find('.output2').find('#split_amount').val()
+                        let address1 = $(event.target).closest('.popup').find('.output1').find('#split_receiver').val()
+                        let address2 = $(event.target).closest('.popup').find('.output2').find('#split_receiver').val()
+                        if (am1 == undefined ||
+                            am2 == undefined ||
+                            address1 == undefined ||
+                            address2 == undefined)
+                            {
+                                closePopup();
+                            }      
+                        am1 = localWeb3.utils.toWei(am1)
+                        am2 = localWeb3.utils.toWei(am2)
+                        am1 = localWeb3.utils.toBN(am1)
+                        am2 = localWeb3.utils.toBN(am2)
+                        let sum = am1.add(am2)
+                        if ( !(sum.eq(depositAmount)) ){
+                            closePopup();
+                        }
+                        if (!localWeb3.utils.isAddress(address1) || !localWeb3.utils.isAddress(address2)) {
+                            closePopup();
+                        }
+
+                        let requestData = {
+                                "txType" : 1,
+                                "inputs": [
+                                        {
+                                        "blockNumber": blockNumber,
+                                        "txNumber": txNumberInBlock,
+                                        "outputNumber" : outputNumberInTransaction
+                                        }
+                                    ],
+                                "outputs": [{
+                                        "to": address1,
+                                        "amount": am1.toString(10)
+                                        },
+                                        {
+                                        "to": address2,
+                                        "amount": am2.toString(10)
+                                        }]
+                            }
+                        sendTXforSerialization(requestData, function(res, status){
+                            if (status != "success" || res.error) {
+                                alert("Invalid transaction parameters")
+                            }
+                            const hash = res.txPersonalHash
+                            localWeb3.eth.sign(hash, address,function(error, sigRes) {
+                                    console.log(error);
+                                    requestData["signature"] = sigRes
+                                    if (!error){
+                                        sendSignedTX(requestData, function(resSigned, statusSigned) {
+                                            if (status != "success" || resSigned.error) {
+                                                alert("Invalid transaction signature")
+                                            }
+                                            closePopup()
+                                        });
+                                    }
+                                    closePopup();
+                                })
+                            })
+                        })
 
     })
 

@@ -15,11 +15,14 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/annybody/annybody.bitbucket.io#readme",
   "dependencies": {
+    "body": "^5.1.0",
+    "body-parser": "^1.18.2",
     "connect": "^3.6.5",
     "express": "^4.16.2",
     "http-server": "^0.10.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
+    "request-promise-native": "^1.0.5",
     "serve-static": "^1.13.1"
   }
 }
