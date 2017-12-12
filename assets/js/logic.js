@@ -3,7 +3,7 @@ var web3 = web3 || ethereumProvider;
 
 var localWeb3; // Web3 and web3 are globals
 
-var plasma_host_address = "0xd8AC480331870c5764b5430F854926b1cfd1d8B1";
+const plasma_host_address = "0xd8AC480331870c5764b5430F854926b1cfd1d8B1";
 
 const pug = require('pug')
 
@@ -22,7 +22,7 @@ const getHistoryDeposit = addr => $.getJSON(API_PREFIX + 'plasmaParent/allDeposi
     if (res.error) {throw error}
     return res.depositRecords
 })
-const getHistoryWithdraw = addr => $.getJSON(API_PREFIX + 'plasmaParent/allWithdraws/' + addr).then(res => {
+const getHistoryWithdraw = addr => $.getJSON(API_PREFIX + 'AplasmaParent/allWithdraws/' + addr).then(res => {
     if (res.error) {throw error}
     return res.withdrawRecords
 })
