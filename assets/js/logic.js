@@ -74,7 +74,8 @@ $(() => {
     const templates = {
         transactions: pug.compile($('script#transactions_list').text()),
         history_deposit: pug.compile($('script#history_list_deposit').text()),
-        history_withdrawal: pug.compile($('script#history_list_withdrawal').text())
+        history_withdrawal: pug.compile($('script#history_list_withdrawal').text()),
+        merge_options: pug.compile($('script#merge_options').text())
     }
 
     localWeb3 = new Web3(web3.currentProvider);
@@ -94,6 +95,7 @@ $(() => {
                 t.eth = localWeb3.utils.fromWei(t.value);
                 t.id  = compose_plasma_tx_id(t)
                 t.short_id = t.id.slice(0,12) + '...' + t.id.slice(-3)
+                t.bn = localWeb3.utils.toBN(t.value)
             })
 
             all_deposits = utxos
@@ -128,15 +130,6 @@ $(() => {
                 .mCustomScrollbar(scrollbar_params);
         })
 
-
-        // $('.transactions__add').on('click', event => {
-
-
-        //     $('.popup-add .address').val(address).attr('disabled', true);
-        //     $('.popup-add .address_label').hide()
-
-        // })
-
         $('.make_halves').on('click', event => {
 
             let first  = active_deposit.eth/2
@@ -154,77 +147,140 @@ $(() => {
             plasma_contract.methods.deposit().send({value: localWeb3.utils.toWei(eth)}, closePopup)
         })
 
+
+        const getInput = d => { return {
+            "blockNumber": d.blockNumber,
+            "txNumber": d.txNumberInBlock,
+            "outputNumber" : d.outputNumberInTransaction
+        }}
+
+        const tx_sign_callback = function(res, status) {
+            if (status != "success" || res.error) {
+                alert("Invalid transaction signature")
+            }
+        }
+
+        const processTX = function(requestData) {
+
+            sendTXforSerialization(requestData, function(res, status){
+                if (status != "success" || res.error) {
+                    alert("Invalid transaction parameters")
+                }
+                const hash = res.txPersonalHash
+                localWeb3.eth.sign(hash, address,function(error, sigRes) {
+                    requestData["signature"] = sigRes
+                    if (!error){
+                        sendSignedTX(requestData, tx_sign_callback);
+                    } else {
+                        console.log(error);
+                    }
+                    closePopup();
+                })
+            })
+        }
+
         $('.popup-split').on('click', '.popup__button', event => {
-                        const deposit = active_deposit
-                        if (deposit == undefined) {
-                            closePopup();
-                        }
-                        const blockNumber = deposit.blockNumber
-                        const txNumberInBlock = deposit.txNumberInBlock
-                        const outputNumberInTransaction = deposit.outputNumberInTransaction
-                        const depositAmount = localWeb3.utils.toBN(deposit.value)
-                        let am1 = $(event.target).closest('.popup').find('.output1').find('#split_amount').val()
-                        let am2 = $(event.target).closest('.popup').find('.output2').find('#split_amount').val()
-                        let address1 = $(event.target).closest('.popup').find('.output1').find('#split_receiver').val()
-                        let address2 = $(event.target).closest('.popup').find('.output2').find('#split_receiver').val()
-                        if (am1 == undefined ||
-                            am2 == undefined ||
-                            address1 == undefined ||
-                            address2 == undefined)
-                            {
-                                closePopup();
-                            }
-                        am1 = localWeb3.utils.toWei(am1)
-                        am2 = localWeb3.utils.toWei(am2)
-                        am1 = localWeb3.utils.toBN(am1)
-                        am2 = localWeb3.utils.toBN(am2)
-                        let sum = am1.add(am2)
-                        if ( !(sum.eq(depositAmount)) ){
-                            closePopup();
-                        }
-                        if (!localWeb3.utils.isAddress(address1) || !localWeb3.utils.isAddress(address2)) {
-                            closePopup();
-                        }
+            const deposit = active_deposit
+            if (deposit == undefined) {
+                closePopup();
+                return
+            }
+            const blockNumber = deposit.blockNumber
+            const txNumberInBlock = deposit.txNumberInBlock
+            const outputNumberInTransaction = deposit.outputNumberInTransaction
+            const depositAmount = localWeb3.utils.toBN(deposit.value)
+            let am1 = $(event.target).closest('.popup').find('.output1').find('#split_amount').val()
+            let am2 = $(event.target).closest('.popup').find('.output2').find('#split_amount').val()
+            let address1 = $(event.target).closest('.popup').find('.output1').find('#split_receiver').val()
+            let address2 = $(event.target).closest('.popup').find('.output2').find('#split_receiver').val()
+            if (am1 == undefined ||
+                am2 == undefined ||
+                address1 == undefined ||
+                address2 == undefined)
+                {
+                    closePopup();
+                }
+            am1 = localWeb3.utils.toWei(am1)
+            am2 = localWeb3.utils.toWei(am2)
+            am1 = localWeb3.utils.toBN(am1)
+            am2 = localWeb3.utils.toBN(am2)
+            let sum = am1.add(am2)
+            if ( !(sum.eq(depositAmount)) ){
+                closePopup();
+            }
+            if (!localWeb3.utils.isAddress(address1) || !localWeb3.utils.isAddress(address2)) {
+                closePopup();
+            }
 
-                        let requestData = {
-                                "txType" : 1,
-                                "inputs": [
-                                        {
-                                        "blockNumber": blockNumber,
-                                        "txNumber": txNumberInBlock,
-                                        "outputNumber" : outputNumberInTransaction
-                                        }
-                                    ],
-                                "outputs": [{
-                                        "to": address1,
-                                        "amount": am1.toString(10)
-                                        },
-                                        {
-                                        "to": address2,
-                                        "amount": am2.toString(10)
-                                        }]
-                            }
-                        sendTXforSerialization(requestData, function(res, status){
-                            if (status != "success" || res.error) {
-                                alert("Invalid transaction parameters")
-                            }
-                            const hash = res.txPersonalHash
-                            localWeb3.eth.sign(hash, address,function(error, sigRes) {
-                                    console.log(error);
-                                    requestData["signature"] = sigRes
-                                    if (!error){
-                                        sendSignedTX(requestData, function(resSigned, statusSigned) {
-                                            if (status != "success" || resSigned.error) {
-                                                alert("Invalid transaction signature")
-                                            }
-                                            closePopup()
-                                        });
-                                    }
-                                    closePopup();
-                                })
-                            })
-                        })
+            let requestData = {
+                "txType" : 1,
+                "inputs": [
+                        {
+                        "blockNumber": blockNumber,
+                        "txNumber": txNumberInBlock,
+                        "outputNumber" : outputNumberInTransaction
+                        }
+                    ],
+                "outputs": [{
+                        "to": address1,
+                        "amount": am1.toString(10)
+                        },
+                        {
+                        "to": address2,
+                        "amount": am2.toString(10)
+                        }]
+            }
 
+            sendTXforSerialization(requestData, function(res, status){
+                if (status != "success" || res.error) {
+                    alert("Invalid transaction parameters")
+                }
+                const hash = res.txPersonalHash
+                localWeb3.eth.sign(hash, address,function(error, sigRes) {
+                    requestData["signature"] = sigRes
+                    if (!error){
+                        sendSignedTX(requestData, tx_sign_callback);
+                    } else {
+                        console.log(error);
+                    }
+                    closePopup();
+                })
+            })
+        })
+
+
+        $('.popup-merge').on('_show', event => {
+
+            let options = all_deposits.filter(d=>d.id!=active_deposit.id)
+            $(event.target).find('select').html(templates.merge_options({options: options}))
+        })
+
+
+        $('.popup-merge').on('click', '.popup__button', event => {
+
+            const $popup = $(event.target).closest('.popup')
+
+            const merge_id = $popup.find('select').val()
+
+            const merging = all_deposits.find(d=>d.id==merge_id)
+
+            const deposit = active_deposit
+
+            if (deposit == undefined || merging == undefined) {
+                closePopup();
+                return
+            }
+
+            processTX({
+                "txType" : 2,
+                "inputs": [getInput(deposit), getInput(merging)],
+                "outputs": [{
+                    "to": address,
+                    "amount": deposit.bn.add(merging.bn).toString(10)
+                }]
+            })
+
+        })
     })
 
 

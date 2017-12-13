@@ -610,6 +610,11 @@ each t in transactions
         .transaction__date=t.beneficiary
 </script>
 
+<script type="template/pug" id="merge_options">
+each opt in options
+    option(value=opt.id)=opt.short_id + " " + opt.eth + "ETH"
+</script>
+
 
   <script src="/assets/js/app.js"></script>
   <script src="/assets/js/plasma_abi.js"></script>
