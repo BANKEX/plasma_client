@@ -20,16 +20,16 @@ const API_PREFIX = "/api/"
 const compose_plasma_tx_id = tx => [tx.blockNumber, tx.txNumberInBlock, tx.outputNumberInTransaction, tx.to].join('|')
 
 const getTransactions = addr => $.getJSON(API_PREFIX + 'utxos/' + addr).then(res=>{
-    if (res.error) {throw error}
+    if (res.error) {throw res}
     return res.utxos
 })
 
 const getHistoryDeposit = addr => $.getJSON(API_PREFIX + 'plasmaParent/allDeposits/' + addr).then(res => {
-    if (res.error) {throw error}
+    if (res.error) {throw res}
     return res.depositRecords
 })
 const getHistoryWithdraw = addr => $.getJSON(API_PREFIX + 'plasmaParent/allWithdraws/' + addr).then(res => {
-    if (res.error) {throw error}
+    if (res.error) {throw res}
     return res.withdrawRecords
 })
 
@@ -53,25 +53,71 @@ const sendSignedTX = (req, cb) => $.ajax({
   success: cb
 });
 
-const sendTX = (params) => {
+const prepareWithdrawProof = params => $.ajax({
+    url: API_PREFIX + 'prepareProofForExpressWithdraw',
+    type:"POST",
+    contentType : 'application/json',
+    data: JSON.stringify(params),
+    dataType: 'json'
+}).then(res => { if (res.error) {throw res} return res.proof})
 
-    $.post({
-        url: API_PREFIX + 'createTX',
-        contentType : 'application/json',
-        data: JSON.stringify(params),
-        dataType: 'json'
-    }).then(res => { if (res.error) {throw error} return res.tx})
-
-}
 
 const scrollbar_params = { axis:"y", mouseWheel:{enable: true,preventDefault:true}}
 
+let templates = {}
 
-var all_deposits = []
+let all_deposits = []
+
+
+const fetchData = addr => {
+
+    getTransactions(addr).then(utxos=> {
+
+        utxos.forEach(t=>{
+            t.eth = localWeb3.utils.fromWei(t.value);
+            t.id  = compose_plasma_tx_id(t)
+            t.short_id = t.id.slice(0,12) + '...' + t.id.slice(-3)
+            t.bn = localWeb3.utils.toBN(t.value)
+        })
+
+        all_deposits = utxos
+
+        $('.transactions__list')
+            .html(templates.transactions({transactions: utxos}))
+            .mCustomScrollbar(scrollbar_params);
+
+    }).fail((r, status, error_text) => console.log(status, error_text))
+
+
+    getHistoryDeposit(addr).then( list => {
+
+        list.forEach(t=>{
+            t.eth = localWeb3.utils.fromWei(t.amount)
+        })
+
+        $('#deposits .history__list')
+            .html(templates.history_deposit({transactions: list}))
+            .mCustomScrollbar(scrollbar_params);
+    })
+
+    getHistoryWithdraw(addr).then( list => {
+
+        list.forEach(t=>{
+            t.index = [t.blockNumber, t.txNumberInBlock, t.index].join('|')
+            t.eth = localWeb3.utils.fromWei(t.amount)
+        })
+
+        $('#withdrawals .history__list')
+            .html(templates.history_withdrawal({transactions: list}))
+            .mCustomScrollbar(scrollbar_params);
+    })
+
+
+}
 
 $(() => {
 
-    const templates = {
+    templates = {
         transactions: pug.compile($('script#transactions_list').text()),
         history_deposit: pug.compile($('script#history_list_deposit').text()),
         history_withdrawal: pug.compile($('script#history_list_withdrawal').text()),
@@ -88,47 +134,10 @@ $(() => {
 
         // console.log(address);
 
-        getTransactions(address).then(utxos=> {
+        fetchData(address)
 
+        setInterval(()=>{ fetchData(address)}, 10000)
 
-            utxos.forEach(t=>{
-                t.eth = localWeb3.utils.fromWei(t.value);
-                t.id  = compose_plasma_tx_id(t)
-                t.short_id = t.id.slice(0,12) + '...' + t.id.slice(-3)
-                t.bn = localWeb3.utils.toBN(t.value)
-            })
-
-            all_deposits = utxos
-
-            $('.transactions__list')
-                .html(templates.transactions({transactions: utxos}))
-                .mCustomScrollbar(scrollbar_params);
-
-        }).fail((r, status, error_text) => console.log(status, error_text))
-
-
-        getHistoryDeposit(address).then( list => {
-
-            list.forEach(t=>{
-                t.eth = localWeb3.utils.fromWei(t.amount)
-            })
-
-            $('#deposits .history__list')
-                .html(templates.history_deposit({transactions: list}))
-                .mCustomScrollbar(scrollbar_params);
-        })
-
-        getHistoryWithdraw(address).then( list => {
-
-            list.forEach(t=>{
-                t.index = [t.blockNumber, t.txNumberInBlock, t.index].join('|')
-                t.eth = localWeb3.utils.fromWei(t.amount)
-            })
-
-            $('#withdrawals .history__list')
-                .html(templates.history_withdrawal({transactions: list}))
-                .mCustomScrollbar(scrollbar_params);
-        })
 
         $('.make_halves').on('click', event => {
 
@@ -139,6 +148,7 @@ $(() => {
             $('.popup').find('.output2').find('#split_amount').focus().val(second).blur()
 
         })
+
 
         $('.popup-add').on('click', '.popup__button', event => {
 
@@ -165,6 +175,7 @@ $(() => {
             sendTXforSerialization(requestData, function(res, status){
                 if (status != "success" || res.error) {
                     alert("Invalid transaction parameters")
+                    return;
                 }
                 const hash = res.txPersonalHash
                 localWeb3.eth.sign(hash, address,function(error, sigRes) {
@@ -279,6 +290,98 @@ $(() => {
                     "amount": deposit.bn.add(merging.bn).toString(10)
                 }]
             })
+
+        })
+
+
+        $('.popup-transfer').on('click', '.popup__button', event => {
+
+            const $popup = $(event.target).closest('.popup')
+
+            const deposit = active_deposit
+
+            const reciever = $popup.find('.popup__input-transfer input').val()
+
+            if (deposit == undefined || !localWeb3.utils.isAddress(reciever)) {
+                closePopup();
+                return
+            }
+
+            processTX({
+                "txType" : 5,
+                "inputs": [getInput(deposit)],
+                "outputs": [{
+                    "to": reciever,
+                    "amount": deposit.bn.toString(10)
+                }]
+            })
+
+        })
+
+
+        $('.popup-withdraw').on('click', '.popup__button', event => {
+
+            const $popup = $(event.target).closest('.popup')
+
+            const deposit = active_deposit
+
+            const reciever = $popup.find('input[type=text]').val()
+
+            if (deposit == undefined || !localWeb3.utils.isAddress(reciever)) {
+                closePopup();
+                return
+            }
+
+            let requestData = {
+                "txType" : 3,
+                "inputs": [getInput(deposit)]
+            }
+
+            sendTXforSerialization(requestData, (res, status) => {
+
+                if (status != "success" || res.error) {
+                    alert("Invalid transaction parameters")
+                    closePopup();
+                    return
+                }
+                const hash = res.txPersonalHash
+
+                const tx = res.tx.inputs[0]
+
+
+                localWeb3.eth.sign(hash, address, (error, sigRes) => {
+
+                    closePopup();
+
+                    if (error) {
+                        console.log(error);
+                        return
+                    }
+
+                    requestData["signature"] = sigRes
+
+                    sendSignedTX(requestData, (e, r) => {
+
+                        prepareWithdrawProof({
+                            blockNumber: tx.blockNumber,
+                            txNumber: tx.txNumberInBlock
+                        }).then(p => { // proof
+
+                            closePopup();
+
+                            plasma_contract.methods
+                            .finalizeWithdrawExpress(p.blockNumber, p.txNumberInBlock, p.tx, p.merkleProof)
+                            .send({from:address}).then(res => {
+
+                                console.log(result.events.WithdrawFinalizedEvent);
+
+                            }).catch(console.log)
+                        })
+                    });
+
+                })
+            })
+
 
         })
     })
