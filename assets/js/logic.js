@@ -366,19 +366,9 @@ $(() => {
                 return
             }
 
-            let requestData = {
+            processTX({
                 "txType" : 3,
                 "inputs": [getInput(deposit)]
-            }
-
-            sendTXforSerialization(requestData, (res, status) => {
-
-                closePopup();
-
-                if (status != "success" || res.error) {
-                    alert("Invalid transaction parameters")
-                    return
-                }
             })
         })
 
