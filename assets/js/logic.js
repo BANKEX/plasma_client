@@ -17,7 +17,7 @@ const initWeb3 = (callback) => localWeb3.eth.net.getId((error, id) => {
 
 const API_PREFIX = "/api/"
 
-const compose_plasma_tx_id = tx => [tx.blockNumber, tx.txNumberInBlock, tx.outputNumberInTransaction, tx.to].join('|')
+const compose_plasma_tx_id = tx => [tx.blockNumber, tx.txNumberInBlock, tx.outputNumberInTransaction].join('|')
 
 const getTransactions = addr => $.getJSON(API_PREFIX + 'utxos/' + addr).then(res=>{
     if (res.error) {throw res}
@@ -32,6 +32,12 @@ const getHistoryWithdraw = addr => $.getJSON(API_PREFIX + 'plasmaParent/allWithd
     if (res.error) {throw res}
     return res.withdrawRecords
 })
+const getWithdraws = addr => $.getJSON(API_PREFIX + 'withdraws/' + addr).then(res => {
+    if (res.error) {throw res}
+    return res.txs
+})
+
+const getTxInfo = tx => $.getJSON(API_PREFIX + `plasmaTX/${tx.blockNumber}/${tx.txNumberInBlock}`)
 
 const sendTXforSerialization = (req, cb) => $.ajax({
   url:API_PREFIX + 'createTX',
@@ -62,11 +68,13 @@ const prepareWithdrawProof = params => $.ajax({
 }).then(res => { if (res.error) {throw res} return res.proof})
 
 
-const scrollbar_params = { axis:"y", mouseWheel:{enable: true,preventDefault:true}}
+const scrollbar_params =  { axis:"y", mouseWheel:{enable: true,preventDefault:true}}
 
 let templates = {}
 
 let all_deposits = []
+
+let all_withdraws = []
 
 
 const fetchData = addr => {
@@ -76,7 +84,7 @@ const fetchData = addr => {
         utxos.forEach(t=>{
             t.eth = localWeb3.utils.fromWei(t.value);
             t.id  = compose_plasma_tx_id(t)
-            t.short_id = t.id.slice(0,12) + '...' + t.id.slice(-3)
+            t.short_id = t.id // .slice(0,12) + '...' + t.id.slice(-3)
             t.bn = localWeb3.utils.toBN(t.value)
         })
 
@@ -84,7 +92,8 @@ const fetchData = addr => {
 
         $('.transactions__list')
             .html(templates.transactions({transactions: utxos}))
-            .mCustomScrollbar(scrollbar_params);
+            // .mCustomScrollbar('destroy')
+            .mCustomScrollbar(scrollbar_params)
 
     }).fail((r, status, error_text) => console.log(status, error_text))
 
@@ -112,8 +121,34 @@ const fetchData = addr => {
             .mCustomScrollbar(scrollbar_params);
     })
 
+    getWithdraws(addr).then( list => {
+
+        console.log(list);
+
+        $.when(...list.map(getTxInfo)).then((...res)=>{
+
+            console.log(res);
+
+            if (res[1] == 'success') {
+                res = [res]
+            }
+
+            for (var i = 0; i < res.length; i++) {
+                list[i].value = res[i][0].outputs[0].value
+                list[i].eth   = localWeb3.utils.fromWei(list[i].value)
+            }
+
+            all_withdraws = list
+
+            $('#inc-withdrawals .history__list')
+                .html(templates.incomlete_withdraw({txs: list}))
+                .mCustomScrollbar(scrollbar_params);
+        })
+    })
+
 
 }
+
 
 $(() => {
 
@@ -121,7 +156,8 @@ $(() => {
         transactions: pug.compile($('script#transactions_list').text()),
         history_deposit: pug.compile($('script#history_list_deposit').text()),
         history_withdrawal: pug.compile($('script#history_list_withdrawal').text()),
-        merge_options: pug.compile($('script#merge_options').text())
+        merge_options: pug.compile($('script#merge_options').text()),
+        incomlete_withdraw: pug.compile($('script#incomlete_withdraw').text())
     }
 
     localWeb3 = new Web3(web3.currentProvider);
@@ -129,6 +165,8 @@ $(() => {
     initWeb3((err, address) => {
 
         if (err) {throw err}
+
+        $('.address').css({visibility:'visible'}).find('#user_address').html(address)
 
         const plasma_contract = new localWeb3.eth.Contract(plasma_abi, plasma_host_address, {from: address});
 
@@ -339,49 +377,32 @@ $(() => {
 
             sendTXforSerialization(requestData, (res, status) => {
 
+                closePopup();
+
                 if (status != "success" || res.error) {
                     alert("Invalid transaction parameters")
-                    closePopup();
                     return
                 }
-                const hash = res.txPersonalHash
-
-                const tx = res.tx.inputs[0]
-
-
-                localWeb3.eth.sign(hash, address, (error, sigRes) => {
-
-                    closePopup();
-
-                    if (error) {
-                        console.log(error);
-                        return
-                    }
-
-                    requestData["signature"] = sigRes
-
-                    sendSignedTX(requestData, (e, r) => {
-
-                        prepareWithdrawProof({
-                            blockNumber: tx.blockNumber,
-                            txNumber: tx.txNumberInBlock
-                        }).then(p => { // proof
-
-                            closePopup();
-
-                            plasma_contract.methods
-                            .finalizeWithdrawExpress(p.blockNumber, p.txNumberInBlock, p.tx, p.merkleProof)
-                            .send({from:address}).then(res => {
-
-                                console.log(result.events.WithdrawFinalizedEvent);
-
-                            }).catch(console.log)
-                        })
-                    });
-
-                })
             })
+        })
 
+        $('#inc-withdrawals').on('click', '.finish_withdrawal', event => {
+
+            const withdraw = all_withdraws[$(event.target).closest('.transaction').index()]
+
+            prepareWithdrawProof({
+                blockNumber: withdraw.blockNumber,
+                txNumber: withdraw.txNumberInBlock
+            }).then(p => {
+
+                plasma_contract.methods
+                .makeWithdrawExpress(p.blockNumber, p.txNumber, p.tx, p.merkleProof)
+                .send({from:address}).then(res => {
+
+                    console.log(res.events);
+
+                }).catch(console.log)
+            })
 
         })
     })

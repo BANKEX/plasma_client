@@ -2809,12 +2809,15 @@ yx-axis
     display: inline-block;
     font-size: 14px; }
   .transaction__number {
-    width: 490px; // changed
+    width: 420px; // changed
     font-weight: 600;
-    text-transform: uppercase; }
+    text-transform: uppercase;
+  }
   .transaction__sum {
-    width: 100px; // changed
+    width: 110px; // changed
     font-weight: 600;
+    text-align: right;
+    margin-right: 5em;
     text-transform: uppercase; }
   .transaction__date {
     width: 180px; }
@@ -2835,3 +2838,36 @@ yx-axis
   background: #0da9ff; }
   .hover .transaction__controls span:hover svg * {
     fill: #fff; }
+
+
+
+.address {
+    position: absolute;
+    right: 0;
+    top: 80px;
+    line-height: 39px;
+    font-size: 10px;
+    letter-spacing: 1.3px;
+    font-weight: 600;
+    visibility: hidden;
+}
+
+.transaction__button {
+
+  width: 100px;
+
+
+}
+
+.finish_withdrawal {
+  height: 24px;
+  top: 12px;
+  margin-left: 0;
+  line-height: 12px;
+  font-size: 12px;
+  padding: 4px 40px;
+  text-align: center;
+  right: 0;
+  left: auto;
+  margin-right: 2em;
+}
