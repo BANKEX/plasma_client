@@ -90,10 +90,8 @@ const fetchData = addr => {
 
         all_deposits = utxos
 
-        $('.transactions__list')
+        $('.transactions__list ._container')
             .html(templates.transactions({transactions: utxos}))
-            // .mCustomScrollbar('destroy')
-            .mCustomScrollbar(scrollbar_params)
 
     }).fail((r, status, error_text) => console.log(status, error_text))
 
@@ -104,9 +102,8 @@ const fetchData = addr => {
             t.eth = localWeb3.utils.fromWei(t.amount)
         })
 
-        $('#deposits .history__list')
+        $('#deposits .history__list ._container')
             .html(templates.history_deposit({transactions: list}))
-            .mCustomScrollbar(scrollbar_params);
     })
 
     getHistoryWithdraw(addr).then( list => {
@@ -116,9 +113,9 @@ const fetchData = addr => {
             t.eth = localWeb3.utils.fromWei(t.amount)
         })
 
-        $('#withdrawals .history__list')
+        $('#withdrawals .history__list ._container')
             .html(templates.history_withdrawal({transactions: list}))
-            .mCustomScrollbar(scrollbar_params);
+
     })
 
     getWithdraws(addr).then( list => {
@@ -140,9 +137,8 @@ const fetchData = addr => {
 
             all_withdraws = list
 
-            $('#inc-withdrawals .history__list')
+            $('#inc-withdrawals .history__list ._container')
                 .html(templates.incomlete_withdraw({txs: list}))
-                .mCustomScrollbar(scrollbar_params);
         })
     })
 

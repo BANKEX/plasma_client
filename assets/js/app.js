@@ -11435,11 +11435,12 @@ $(function () {
     if(!is_touch_device()) {
       $('body').addClass('hover');
     }
-    // $('.transactions__list,.history__list').mCustomScrollbar({
-    //     axis:"y", // vertical scrollbar,
-    //     //advanced:{autoExpandHorizontalScroll:true},
-    //     mouseWheel:{enable: true,preventDefault:true}
-    // });
+    $('.transactions__list,.history__list').mCustomScrollbar({
+        axis:"y", // vertical scrollbar,
+        //advanced:{autoExpandHorizontalScroll:true},
+        mouseWheel:{enable: true,preventDefault:true},
+        advanced:{updateOnContentResize: true},
+    });
     $('.popup__input input').each(function () {
         var _el = $(this);
         var _val = _el.val();
