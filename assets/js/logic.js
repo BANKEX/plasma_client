@@ -73,9 +73,74 @@ const scrollbar_params =  { axis:"y", mouseWheel:{enable: true,preventDefault:tr
 let templates = {}
 
 let all_deposits = []
-
 let all_withdraws = []
 
+let history_deposits = []
+let history_withdrawals = []
+
+
+let transactions_sorting = 'date'
+let history_sorting = 'date'
+
+
+const renderTransactions = (txs) => {
+
+    if (transactions_sorting == 'date') {
+        txs.sort((b,a)=>a.blockNumber-b.blockNumber)
+    } else {
+        txs.sort((b,a)=>a.eth-b.eth)
+    }
+
+    all_deposits = txs
+
+    $('.transactions__list ._container')
+        .html(templates.transactions({transactions: all_deposits}))
+}
+
+
+const renderHistoryDeposits = (list) => {
+
+    if (history_sorting == 'date') {
+        list.sort((b,a)=>a.index-b.index)
+    } else {
+        list.sort((b,a)=>a.eth-b.eth)
+    }
+
+    history_deposits = list
+
+    $('#deposits .history__list ._container')
+        .html(templates.history_deposit({transactions: list}))
+}
+
+
+const renderHistoryWithdrawals = (list) => {
+
+    if (history_sorting == 'date') {
+        list.sort((b,a)=>a.blockNumber-b.blockNumber)
+    } else {
+        list.sort((b,a)=>a.eth-b.eth)
+    }
+
+    history_withdrawals = list
+
+    $('#withdrawals .history__list ._container')
+        .html(templates.history_withdrawal({transactions: list}))
+
+}
+
+const renderIncompleteWithdrawals = (list) => {
+
+    if (history_sorting == 'date') {
+        list.sort((b,a)=>a.blockNumber-b.blockNumber)
+    } else {
+        list.sort((b,a)=>a.eth-b.eth)
+    }
+
+    all_withdraws = list
+
+    $('#inc-withdrawals .history__list ._container')
+        .html(templates.incomlete_withdraw({txs: list}))
+}
 
 const fetchData = addr => {
 
@@ -88,10 +153,7 @@ const fetchData = addr => {
             t.bn = localWeb3.utils.toBN(t.value)
         })
 
-        all_deposits = utxos
-
-        $('.transactions__list ._container')
-            .html(templates.transactions({transactions: utxos}))
+        renderTransactions(utxos)
 
     }).fail((r, status, error_text) => console.log(status, error_text))
 
@@ -102,8 +164,9 @@ const fetchData = addr => {
             t.eth = localWeb3.utils.fromWei(t.amount)
         })
 
-        $('#deposits .history__list ._container')
-            .html(templates.history_deposit({transactions: list}))
+        console.log(list);
+
+        renderHistoryDeposits(list)
     })
 
     getHistoryWithdraw(addr).then( list => {
@@ -113,18 +176,12 @@ const fetchData = addr => {
             t.eth = localWeb3.utils.fromWei(t.amount)
         })
 
-        $('#withdrawals .history__list ._container')
-            .html(templates.history_withdrawal({transactions: list}))
-
+        renderHistoryWithdrawals(list)
     })
 
     getWithdraws(addr).then( list => {
 
-        console.log(list);
-
         $.when(...list.map(getTxInfo)).then((...res)=>{
-
-            console.log(res);
 
             if (res[1] == 'success') {
                 res = [res]
@@ -135,10 +192,7 @@ const fetchData = addr => {
                 list[i].eth   = localWeb3.utils.fromWei(list[i].value)
             }
 
-            all_withdraws = list
-
-            $('#inc-withdrawals .history__list ._container')
-                .html(templates.incomlete_withdraw({txs: list}))
+            renderIncompleteWithdrawals(list)
         })
     })
 
@@ -191,6 +245,21 @@ $(() => {
             plasma_contract.methods.deposit().send({value: localWeb3.utils.toWei(eth)}, closePopup)
         })
 
+        $('.transactions__sort select').on('change', event=> {
+
+            transactions_sorting = event.target.value
+
+            renderTransactions(all_deposits)
+        })
+
+        $('.history__sort select').on('change', event=> {
+
+            history_sorting = event.target.value
+
+            renderHistoryDeposits(history_deposits)
+            renderHistoryWithdrawals(history_withdrawals)
+            renderIncompleteWithdrawals(all_withdraws)
+        })
 
         const getInput = d => { return {
             "blockNumber": d.blockNumber,

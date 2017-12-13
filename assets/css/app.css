@@ -2809,15 +2809,15 @@ yx-axis
     display: inline-block;
     font-size: 14px; }
   .transaction__number {
-    width: 420px; // changed
+    width: 380px; // changed
     font-weight: 600;
     text-transform: uppercase;
   }
   .transaction__sum {
-    width: 110px; // changed
+    width: 150px; // changed
     font-weight: 600;
     text-align: right;
-    margin-right: 5em;
+    margin-right: 2em;
     text-transform: uppercase; }
   .transaction__date {
     width: 180px; }
