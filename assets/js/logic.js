@@ -355,20 +355,14 @@ $(() => {
 
         $('.popup-withdraw').on('click', '.popup__button', event => {
 
-            const $popup = $(event.target).closest('.popup')
-
-            const deposit = active_deposit
-
-            const reciever = $popup.find('input[type=text]').val()
-
-            if (deposit == undefined || !localWeb3.utils.isAddress(reciever)) {
+            if (active_deposit == undefined) {
                 closePopup();
                 return
             }
 
             processTX({
                 "txType" : 3,
-                "inputs": [getInput(deposit)]
+                "inputs": [getInput(active_deposit)]
             })
         })
 
