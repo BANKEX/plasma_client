@@ -83,6 +83,7 @@ let transactions_sorting = 'date'
 let history_sorting = 'date'
 
 
+
 const renderTransactions = (txs) => {
 
     if (transactions_sorting == 'date') {
@@ -146,14 +147,23 @@ const fetchData = addr => {
 
     getTransactions(addr).then(utxos=> {
 
-        utxos.forEach(t=>{
-            t.eth = localWeb3.utils.fromWei(t.value);
-            t.id  = compose_plasma_tx_id(t)
-            t.short_id = t.id // .slice(0,12) + '...' + t.id.slice(-3)
-            t.bn = localWeb3.utils.toBN(t.value)
-        })
+        if (utxos.length == 0) {
+            $('.no_transactions').show()
+            $('.transactions__sort ').addClass('disabled')
+        } else {
 
-        renderTransactions(utxos)
+            $('.no_transactions').hide()
+            $('.transactions__sort').removeClass('disabled')
+
+            utxos.forEach(t=>{
+                t.eth = localWeb3.utils.fromWei(t.value);
+                t.id  = compose_plasma_tx_id(t)
+                t.short_id = t.id // .slice(0,12) + '...' + t.id.slice(-3)
+                t.bn = localWeb3.utils.toBN(t.value)
+            })
+
+            renderTransactions(utxos)
+        }
 
     }).fail((r, status, error_text) => console.log(status, error_text))
 
@@ -163,8 +173,6 @@ const fetchData = addr => {
         list.forEach(t=>{
             t.eth = localWeb3.utils.fromWei(t.amount)
         })
-
-        console.log(list);
 
         renderHistoryDeposits(list)
     })
