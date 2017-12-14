@@ -1,13 +1,13 @@
-var web3 = web3 || ethereumProvider;
+const web3 = window.web3 || window.ethereumProvider;
 
-var localWeb3; // Web3 and web3 are globals
+let localWeb3; // Web3 and web3 are globals
 
-var plasma_host_address = "0xd8AC480331870c5764b5430F854926b1cfd1d8B1";
+const plasma_host_address = "0xd8AC480331870c5764b5430F854926b1cfd1d8B1";
 
 const pug = require('pug');
 
 const initWeb3 = (callback) => localWeb3.eth.net.getId((error, id) => {
-    if (id != 4) {
+    if (id !== 4) {
         alert("Requires Rinkeby test network. Change network in Metamask and refresh the page.");
         callback(error, null);
         return;
@@ -50,7 +50,6 @@ const getTxInfo = tx => $.getJSON(API_PREFIX + `plasmaTX/${tx.blockNumber}/${tx.
 const sendTXforSerialization = (req, cb) => $.ajax({
     url: API_PREFIX + 'createTX',
     type: "POST",
-    data: req,
     data: JSON.stringify(req),
     contentType: "application/json; charset=utf-8",
     dataType: "json",
@@ -60,7 +59,6 @@ const sendTXforSerialization = (req, cb) => $.ajax({
 const sendSignedTX = (req, cb) => $.ajax({
     url: API_PREFIX + 'sendSignedTX',
     type: "POST",
-    data: req,
     data: JSON.stringify(req),
     contentType: "application/json; charset=utf-8",
     dataType: "json",
@@ -98,7 +96,7 @@ let history_sorting = 'date';
 
 const renderTransactions = (txs) => {
 
-    if (transactions_sorting == 'date') {
+    if (transactions_sorting === 'date') {
         txs.sort((b, a) => a.blockNumber - b.blockNumber);
     } else {
         txs.sort((b, a) => a.eth - b.eth);
@@ -113,7 +111,7 @@ const renderTransactions = (txs) => {
 
 const renderHistoryDeposits = (list) => {
 
-    if (history_sorting == 'date') {
+    if (history_sorting === 'date') {
         list.sort((b, a) => a.index - b.index);
     } else {
         list.sort((b, a) => a.eth - b.eth);
@@ -128,7 +126,7 @@ const renderHistoryDeposits = (list) => {
 
 const renderHistoryWithdrawals = (list) => {
 
-    if (history_sorting == 'date') {
+    if (history_sorting === 'date') {
         list.sort((b, a) => a.blockNumber - b.blockNumber);
     } else {
         list.sort((b, a) => a.eth - b.eth);
@@ -143,7 +141,7 @@ const renderHistoryWithdrawals = (list) => {
 
 const renderIncompleteWithdrawals = (list) => {
 
-    if (history_sorting == 'date') {
+    if (history_sorting === 'date') {
         list.sort((b, a) => a.blockNumber - b.blockNumber);
     } else {
         list.sort((b, a) => a.eth - b.eth);
@@ -159,7 +157,7 @@ const fetchData = addr => {
 
     getTransactions(addr).then(utxos => {
 
-        if (utxos.length == 0) {
+        if (utxos.length === 0) {
             $('.no_transactions').show();
             $('.transactions__sort ').addClass('disabled');
         } else {
@@ -203,11 +201,11 @@ const fetchData = addr => {
 
         $.when(...list.map(getTxInfo)).then((...res) => {
 
-            if (res[1] == 'success') {
+            if (res[1] === 'success') {
                 res = [res];
             }
 
-            for (var i = 0; i < res.length; i++) {
+            for (let i = 0; i < res.length; i++) {
                 list[i].value = res[i][0].outputs[0].value;
                 list[i].eth = localWeb3.utils.fromWei(list[i].value);
             }
@@ -294,7 +292,7 @@ $(() => {
         };
 
         const tx_sign_callback = function (res, status) {
-            if (status != "success" || res.error) {
+            if (status !== "success" || res.error) {
                 alert("Invalid transaction signature");
             }
         };
@@ -321,7 +319,7 @@ $(() => {
 
         $('.popup-split').on('click', '.popup__button', event => {
             const deposit = active_deposit;
-            if (deposit == undefined) {
+            if (deposit === undefined) {
                 closePopup();
                 return;
             }
@@ -333,10 +331,10 @@ $(() => {
             let am2 = $(event.target).closest('.popup').find('.output2').find('#split_amount').val();
             let address1 = $(event.target).closest('.popup').find('.output1').find('#split_receiver').val();
             let address2 = $(event.target).closest('.popup').find('.output2').find('#split_receiver').val();
-            if (am1 == undefined ||
-                am2 == undefined ||
-                address1 == undefined ||
-                address2 == undefined) {
+            if (am1 === undefined ||
+                am2 === undefined ||
+                address1 === undefined ||
+                address2 === undefined) {
                 closePopup();
             }
             am1 = localWeb3.utils.toWei(am1);
@@ -371,7 +369,7 @@ $(() => {
             };
 
             sendTXforSerialization(requestData, function (res, status) {
-                if (status != "success" || res.error) {
+                if (status !== "success" || res.error) {
                     alert("Invalid transaction parameters");
                 }
                 const hash = res.txPersonalHash;
@@ -390,7 +388,7 @@ $(() => {
 
         $('.popup-merge').on('_show', event => {
 
-            let options = all_deposits.filter(d => d.id != active_deposit.id);
+            let options = all_deposits.filter(d => d.id !== active_deposit.id);
             $(event.target).find('select').html(templates.merge_options({options: options}));
         });
 
@@ -401,11 +399,11 @@ $(() => {
 
             const merge_id = $popup.find('select').val();
 
-            const merging = all_deposits.find(d => d.id == merge_id);
+            const merging = all_deposits.find(d => d.id === merge_id);
 
             const deposit = active_deposit;
 
-            if (deposit == undefined || merging == undefined) {
+            if (deposit === undefined || merging === undefined) {
                 closePopup();
                 return;
             }
@@ -430,7 +428,7 @@ $(() => {
 
             const reciever = $popup.find('.popup__input-transfer input').val();
 
-            if (deposit == undefined || !localWeb3.utils.isAddress(reciever)) {
+            if (deposit === undefined || !localWeb3.utils.isAddress(reciever)) {
                 closePopup();
                 return;
             }
@@ -449,7 +447,7 @@ $(() => {
 
         $('.popup-withdraw').on('click', '.popup__button', event => {
 
-            if (active_deposit == undefined) {
+            if (active_deposit === undefined) {
                 closePopup();
                 return;
             }
