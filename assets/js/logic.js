@@ -21,26 +21,26 @@ const compose_plasma_tx_id = tx => [tx.blockNumber, tx.txNumberInBlock, tx.outpu
 
 const getTransactions = addr => $.getJSON(API_PREFIX + 'utxos/' + addr).then(res => {
     if (res.error) {
-        throw res;
+        showError({title: "Error", description: res.reason}); return;
     }
     return res.utxos;
 });
 
 const getHistoryDeposit = addr => $.getJSON(API_PREFIX + 'plasmaParent/allDeposits/' + addr).then(res => {
     if (res.error) {
-        throw res;
+        showError({title: "Error", description: res.reason}); return;
     }
     return res.depositRecords;
 });
 const getHistoryWithdraw = addr => $.getJSON(API_PREFIX + 'plasmaParent/allWithdraws/' + addr).then(res => {
     if (res.error) {
-        throw res;
+        showError({title: "Error", description: res.reason}); return;
     }
     return res.withdrawRecords;
 });
 const getWithdraws = addr => $.getJSON(API_PREFIX + 'withdraws/' + addr).then(res => {
     if (res.error) {
-        throw res;
+        showError({title: "Error", description: res.reason}); return;
     }
     return res.txs;
 });
@@ -73,7 +73,8 @@ const prepareWithdrawProof = params => $.ajax({
     dataType: 'json'
 }).then(res => {
     if (res.error) {
-        throw res;
+        showError({title: "Error", description: res.reason});
+        throw null;
     }
     return res.proof;
 });
@@ -304,13 +305,14 @@ $(() => {
             };
         };
 
-        const tx_sign_callback = function (res, status) {
+        const tx_sign_callback = (callback) => function (res, status) {
             if (status !== "success" || res.error) {
                 showError({title: "Transaction error", description: "Invalid transaction signature"});
             }
+            if (callback !== undefined) {callback()}
         };
 
-        const processTX = function (requestData) {
+        const processTX = function (requestData, callback) {
 
             sendTXforSerialization(requestData, function (res, status) {
                 if (status != "success" || res.error) {
@@ -318,11 +320,15 @@ $(() => {
                     return;
                 }
                 const hash = res.txPersonalHash;
+
+                // not error, just popup
+                showError({title: "Transaction sign", description: "Waiting for metamask confirm"})
+
                 localWeb3.eth.sign(hash, address, function (error, sigRes) {
                     requestData["signature"] = sigRes;
                     closePopup();
                     if (!error) {
-                        sendSignedTX(requestData, tx_sign_callback);
+                        sendSignedTX(requestData, tx_sign_callback(callback));
                     } else {
                         showError({title: "Transaction failed", description: error.toString().split(':').pop()});
                     }
@@ -452,6 +458,20 @@ $(() => {
             processTX({
                 "txType": 3,
                 "inputs": [getInput(active_deposit)]
+            }, () => {
+
+                if (!localStorage.widthdraw_hint !== true) {
+                    localStorage.widthdraw_hint = true
+
+                    const a = new Anno({
+                      target  : '#inc-withdrawals-title',
+                      position: 'center-top',
+                      content : "Now, to finish transaction, confirm withdrawal in this list",
+                      buttons : []
+                    })
+
+                    a.show()
+                }
             });
         });
 

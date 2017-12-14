@@ -9,6 +9,7 @@
     <!--script(src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false")-->
 
     <link rel="stylesheet" href="/assets/css/app.css?v2" type="text/css">
+    <link rel="stylesheet" href="/vendor/anno.css" type="text/css">
   </head>
   <body>
     <!-- START: header-->
@@ -71,7 +72,7 @@
               <ul data-tabs="" class="history__tabs tabs">
                 <li class="tabs-title is-active"><a href="#deposits">deposits</a></li>
                 <li class="tabs-title"><a href="#withdrawals">withdrawals</a></li>
-                <li class="tabs-title"><a href="#inc-withdrawals">incomplete withdrawals</a></li>
+                <li class="tabs-title" id="inc-withdrawals-title"><a href="#inc-withdrawals">incomplete withdrawals</a></li>
               </ul>
               <div class="history__sort">
                 <label>Sort by</label>
@@ -306,6 +307,11 @@ each t in txs
 
 <script src="/vendor/pug.js"></script>
 <script src="/vendor/web3.min.js"></script>
+<script src="/vendor/jquery.scrollintoview.min.js"></script>
+<script src="/vendor/anno.js"></script>
 
 <script src="/assets/js/logic.js?v2"></script>
+
+
+
 </html>

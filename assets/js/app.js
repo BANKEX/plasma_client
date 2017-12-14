@@ -11486,7 +11486,9 @@ function openPopup(classname, event) {
 
 	setActiveDeposit(event)
 
-	$(classname).find('.popup__title span').html(active_deposit.short_id + " " + active_deposit.eth + ' ETH')
+	if (active_deposit) {
+		$(classname).find('.popup__title span').html(active_deposit.short_id + " " + active_deposit.eth + ' ETH')
+	}
 
 	$(classname).trigger('_show')
 }
