@@ -4,29 +4,29 @@ const request = require('request');
 
 const config = require('./config.js');
 const bodyParser = require('body-parser');
-const app = connect()
-var textBody = require("body")
-var jsonBody = require("body/json")
-var formBody = require("body/form")
-const rp = require('request-promise-native')
+const app = connect();
+// var textBody = require("body");
+// var jsonBody = require("body/json");
+// var formBody = require("body/form");
+// const rp = require('request-promise-native');
 
 // app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-app.use('/api', async (req, res) => {
+app.use(bodyParser.json());
+app.use('/api', (req, res) => {
 
-    var _path = req.originalUrl.split('/api/')[1]
+    const _path = req.originalUrl.split('/api/')[1];
     const requestType = req.method;
 
     // console.log(requestType + ": " + config.plasma_host + _path);
 
-    if (requestType == "GET") {
+    if (requestType === "GET") {
         request.get({uri: config.plasma_host + _path, timeout: 2000}).on('error', e=>{
-            res.writeHead(408)
+            res.writeHead(408);
             res.end()
         }).pipe(res)
-    } else if (requestType == "POST") {
+    } else if (requestType === "POST") {
         request.post({uri: config.plasma_host + _path, headers: {"Content-Type":"application/json"}, body: req.body, json: true, timeout: 2000}).on('error', e=>{
-            res.writeHead(408)
+            res.writeHead(408);
             res.end()
         }).pipe(res)
     }
