@@ -2872,3 +2872,11 @@ yx-axis
   margin-right: 2em;
 }
 
+.popup__description {
+
+  padding-bottom: 1em;
+}
+
+.popup__description a {
+  color: #2199e8;
+}

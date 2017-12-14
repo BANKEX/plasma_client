@@ -8,7 +8,7 @@ const pug = require('pug');
 
 const initWeb3 = (callback) => localWeb3.eth.net.getId((error, id) => {
     if (id !== 4) {
-        alert("Requires Rinkeby test network. Change network in Metamask and refresh the page.");
+        showError({title: "Rinkeby test network is required", description: "Change network in Metamask and refresh the page"});
         callback(error, null);
         return;
     }
@@ -220,6 +220,12 @@ const fetchData = addr => {
 
 $(() => {
 
+    if (web3 === undefined) {
+
+        showError({title: "Metamask not found", description: "<a href='https://metamask.io/'>Install Metamask</a> to use Plasma."})
+        return
+    }
+
     templates = {
         transactions: pug.compile($('script#transactions_list').text()),
         history_deposit: pug.compile($('script#history_list_deposit').text()),
@@ -233,7 +239,14 @@ $(() => {
     initWeb3((err, address) => {
 
         if (err) {
-            throw err;
+            showError({title: "Metamask initialize error", description: err})
+            return
+        }
+
+        if (!address) {
+            showError({title: "Metamask wallet is locked", description: "Please, unlock your wallet and refresh the page"})
+
+            return;
         }
 
         $('.address').css({visibility: 'visible'}).find('#user_address').html(address);
@@ -293,7 +306,7 @@ $(() => {
 
         const tx_sign_callback = function (res, status) {
             if (status !== "success" || res.error) {
-                alert("Invalid transaction signature");
+                showError({title: "Transaction error", description: "Invalid transaction signature"});
             }
         };
 
@@ -301,18 +314,18 @@ $(() => {
 
             sendTXforSerialization(requestData, function (res, status) {
                 if (status != "success" || res.error) {
-                    alert("Invalid transaction parameters");
+                    showError({title: "Transaction failed", description: "Please, check the following: <ul><li>ehtereum address is copy-pasted correctly</li><li>values sum is equal to deposit</li></ul>"})
                     return;
                 }
                 const hash = res.txPersonalHash;
                 localWeb3.eth.sign(hash, address, function (error, sigRes) {
                     requestData["signature"] = sigRes;
+                    closePopup();
                     if (!error) {
                         sendSignedTX(requestData, tx_sign_callback);
                     } else {
-                        console.log(error);
+                        showError({title: "Transaction failed", description: error.toString().split(':').pop()});
                     }
-                    closePopup();
                 });
             });
         };
@@ -349,7 +362,7 @@ $(() => {
                 closePopup();
             }
 
-            let requestData = {
+            processTX({
                 "txType": 1,
                 "inputs": [
                     {
@@ -366,22 +379,6 @@ $(() => {
                         "to": address2,
                         "amount": am2.toString(10)
                     }]
-            };
-
-            sendTXforSerialization(requestData, function (res, status) {
-                if (status !== "success" || res.error) {
-                    alert("Invalid transaction parameters");
-                }
-                const hash = res.txPersonalHash;
-                localWeb3.eth.sign(hash, address, function (error, sigRes) {
-                    requestData["signature"] = sigRes;
-                    if (!error) {
-                        sendSignedTX(requestData, tx_sign_callback);
-                    } else {
-                        console.log(error);
-                    }
-                    closePopup();
-                });
             });
         });
 
@@ -472,8 +469,14 @@ $(() => {
                     .send({from: address}).then(res => {
 
                     console.log(res.events);
+                    // TODO: wodho "eth network is mining" message
 
-                }).catch(console.log);
+                }).catch((e)=>{
+
+                    showError({title: "Smart contract returned an error", description: e})
+
+
+                });
             });
 
         });

@@ -11492,6 +11492,20 @@ function openPopup(classname, event) {
 }
 
 
+function showError(params) {
+
+	$('body').addClass('popup-open');
+	$('.popup').removeClass('open');
+
+	var $e = $('.popup-error')
+
+	$e.find('.popup__title').text(params.title)
+	$e.find('.popup__description').html(params.description)
+
+	$e.addClass('open');
+}
+
+
 $(function () {
 
 	$('.transactions').on('click', '.transactions__add', function(e){
@@ -11527,6 +11541,16 @@ $(function () {
         openPopup('.popup-withdraw', e)
         e.preventDefault();
     });
+
+    $(document).on('keydown', function(event){
+    	if (event.keyCode === 27) { //esc
+    		closePopup()
+    	}
+    })
+
+
+
+
 });
 $(document).foundation();
 
