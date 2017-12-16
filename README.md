@@ -17,7 +17,8 @@
 
 4.  Unlock metamask (with your login\password)
 
-5.  Check that you have ETH on this network (we will provide it for you)
+4. Check that you have ETH on this network in Metamask plugin
+   - If your need test Ethers: please follow the rules on the page https://www.rinkeby.io/#faucet
 
 6.  Click “Add ETH” button of website
 
