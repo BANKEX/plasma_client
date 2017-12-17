@@ -500,6 +500,11 @@ $(() => {
             });
 
         });
+
+
+        if (window.TestTokens) {
+            window.TestTokens.init(localWeb3, address);
+        }
     });
 
 

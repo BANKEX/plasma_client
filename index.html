@@ -10,6 +10,44 @@
 
     <link rel="stylesheet" href="/assets/css/app.css?v2" type="text/css">
     <link rel="stylesheet" href="/vendor/anno.css" type="text/css">
+
+      <script>window.twttr = (function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0],
+              t = window.twttr || {};
+          if (d.getElementById(id)) return t;
+          js = d.createElement(s);
+          js.id = id;
+          js.src = "https://platform.twitter.com/widgets.js";
+          fjs.parentNode.insertBefore(js, fjs);
+
+          t._e = [];
+          t.ready = function(f) {
+              t._e.push(f);
+          };
+
+          return t;
+      }(document, "script", "twitter-wjs"));</script>
+
+      <!-- Load Facebook SDK for JavaScript -->
+      <div id="fb-root"></div>
+      <script>
+          window.fbAsyncInit = function() {
+              FB.init({
+                  appId            : '2417361745156389',
+                  autoLogAppEvents : true,
+                  xfbml            : true,
+                  version          : 'v2.11'
+              });
+          };
+
+          (function(d, s, id){
+              var js, fjs = d.getElementsByTagName(s)[0];
+              if (d.getElementById(id)) {return;}
+              js = d.createElement(s); js.id = id;
+              js.src = "https://connect.facebook.net/en_US/sdk.js";
+              fjs.parentNode.insertBefore(js, fjs);
+          }(document, 'script', 'facebook-jssdk'));
+      </script>
   </head>
   <body>
     <!-- START: header-->
@@ -46,23 +84,34 @@
     </g>
 </svg>
 </i><span>Add ETH</span></a>
-              <div class="transactions__sort">
-                <label>Sort by</label>
-                <select>
-                  <option value="date"> Date added</option>
-                  <option value="amount">Amount</option>
-                </select>
-              </div>
-              <div class="transactions__info no_transactions" style="display: none;">You haven’t got any active transations here. Start by adding ETH deposit.</div>
-              <div class="transactions__list">
-                <div class="_container">
 
-                </div>
+                <!--<a id="get-test-tokens">-->
+                    <!--Get Test Tokens-->
+                <!--</a>-->
 
-              </div>
-            </div>
-          </div>
-          <!-- END: transactions-->
+                <div id="get-test-tokens-twitter-button"></div>
+
+                <a id="get-test-tokens-facebook-button">Facebook</a>
+
+
+
+             <div class="transactions__sort">
+               <label>Sort by</label>
+               <select>
+                 <option value="date"> Date added</option>
+                 <option value="amount">Amount</option>
+               </select>
+             </div>
+             <div class="transactions__info no_transactions" style="display: none;">You haven’t got any active transations here. Start by adding ETH deposit.</div>
+             <div class="transactions__list">
+               <div class="_container">
+
+               </div>
+
+             </div>
+           </div>
+         </div>
+         <!-- END: transactions-->
           <!-- START: transactions-->
           <!-- START: product-->
           <!-- END: product-->
@@ -240,6 +289,28 @@
         </div>
       </div>
       <!-- END: popup-error-->
+
+        <!-- .get-test-tokens-popup -->
+
+        <div class="popup popup-get-test-tokens">
+            <div class="popup__inner">
+                <div class="popup__block"><a href="#" class="popup__close"><span><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14">
+    <path fill="#444" fill-rule="evenodd" d="M13.7.3c-.4-.4-1-.4-1.4 0L7 5.6 1.7.3C1.3-.1.7-.1.3.3c-.4.4-.4 1 0 1.4L5.6 7 .3 12.3c-.4.4-.4 1 0 1.4.2.2.4.3.7.3.3 0 .5-.1.7-.3L7 8.4l5.3 5.3c.2.2.5.3.7.3.2 0 .5-.1.7-.3.4-.4.4-1 0-1.4L8.4 7l5.3-5.3c.4-.4.4-1 0-1.4" opacity=".5"/>
+</svg>
+</span></a>
+                    <div class="popup__title">Select social network</div>
+                    <div class="popup__description">
+                        <!--<div id="get-test-tokens-twitter-button"></div>-->
+                    </div>
+
+                    <a href="#" class="popup__cancel">Ok</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- /.get-test-tokens-popup -->
+
+
     </div>
   </body>
 
@@ -311,6 +382,7 @@ each t in txs
 <script src="/vendor/anno.js"></script>
 
 <script src="/assets/js/logic.js?v2"></script>
+  <script src="/assets/js/get_test_tokens.js?v2"></script>
 
 
 
