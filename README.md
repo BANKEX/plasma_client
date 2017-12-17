@@ -1,11 +1,4 @@
-# Plasma Protocol Client
-
-## Installation on the local machine:
-
-1. `npm install`
-1. `node server.js`
-1. Open [http://localhost:8080/](http://localhost:8080/)
-
+# Web Client for Plasma Protocol 
 
 ## How to Add ETH to Plasma test network:
 
@@ -36,3 +29,10 @@
 
 1.  You’re Done!
     - now you can merge, transfer and withdraw your transaction in the Plasma network! :fire:
+
+
+## Installation on the local machine:
+
+1. `npm install`
+1. `node server.js`
+1. Open [http://localhost:8080/](http://localhost:8080/)
