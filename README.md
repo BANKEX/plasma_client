@@ -1,3 +1,5 @@
+![bkx-plasma-github](https://user-images.githubusercontent.com/3356474/34122937-0c1e8f34-e43f-11e7-987c-0fb382751eaa.png)
+
 # Web Client for Plasma Protocol 
 
 ## How to Add ETH to Plasma test network:
