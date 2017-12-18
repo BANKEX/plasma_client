@@ -2,6 +2,11 @@
 
 # Web Client for Plasma Protocol 
 
+### Plasma protocol DEMO:
+https://plasma.bankex.com
+### Plasma Protocol source-code :octocat:
+https://github.com/BankEx/PlasmaETHexchange
+
 ## How to Add ETH to Plasma test network:
 
 1.  Go to your local web page (or [https://bankexplasma.eastus.cloudapp.azure.com/](https://bankexplasma.eastus.cloudapp.azure.com/) )
