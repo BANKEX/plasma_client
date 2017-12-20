@@ -59,7 +59,7 @@
 
         giveMeTokens: function(networkName, userId) {
             //should be replaced on correct one
-            const url = 'http://localhost:3000/web3/rinkeby/tokensPlease';
+            const url = 'http://faucet.bankex.com/web3/rinkeby/tokensPlease';
             var data = new FormData();
             data.append('json', {
                 wallet: this.address,
