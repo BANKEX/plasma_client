@@ -20,7 +20,7 @@ https://github.com/BankEx/PlasmaETHexchange
 4. Check that you have ETH on this network in Metamask plugin
    - If your need test Ethers: please follow the rules on the page https://www.rinkeby.io/#faucet
 
-6.  Click “Add ETH” button of website
+6.  Go to https://plasma.bankex.com/ and click “Add ETH” button of website
 
 7.  Enter Eth Amount (0.1 eth is enough for tests)
 
