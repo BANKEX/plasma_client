@@ -2429,7 +2429,8 @@ h6, .h6 {
     margin-right: -32px; }
     .transactions__list.mCS_no_scrollbar {
       margin-right: 0; }
-  .transactions__add {
+  .transactions__add,
+  .transactions-get-free-tokens {
     height: 48px;
     position: absolute;
     left: 50%;
@@ -2450,6 +2451,11 @@ h6, .h6 {
       height: 32px;
       top: 8px;
       left: 20px; }
+    .transactions-get-free-tokens {
+      top: 60px;
+      margin-left: -70px;
+      padding-left: 24px;
+    }
 
 .hover .transactions__add:hover {
   background: #0da9ff;
