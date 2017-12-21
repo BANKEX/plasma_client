@@ -86,8 +86,11 @@
                     if (res.success) {
                         alert('Your tokens are coming. Transaction hash: ' + res.transactionHash);
                     } else {
-                        // alert(res.message);
+                        showError({title: "Error", description: res.message});
                     }
+                })
+                .catch(function(err) {
+                    showError({title: "Error", description: err.responseText});
                 });
 
         }
