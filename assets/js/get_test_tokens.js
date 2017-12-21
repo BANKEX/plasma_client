@@ -46,6 +46,7 @@
                 FB.ui(
                     {
                         method: 'share',
+                        quote:'Plasma quote',
                         href: 'https://plasma.bankex.com/'
                     },
                     // callback
