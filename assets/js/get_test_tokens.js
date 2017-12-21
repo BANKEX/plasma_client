@@ -5,7 +5,7 @@
         address: null,
 
         showSocialNetworksPopup: function(e) {
-            // openPopup('.popup-get-test-tokens', e);
+            openPopup('.popup-get-test-tokens', e);
         },
 
         init: function(web3, address) {
@@ -31,15 +31,17 @@
             //     );
             // });
 
-            $('#get-free-tokens').on('click', () => {
-                this.showFacebookShareModal()
+            $('#get-free-tokens').on('click', self.showSocialNetworksPopup);
+
+            $('#show-facebook-popup').on('click', () => {
+                this.showFacebookShareModal();
+                closePopup();
             });
 
             this.getTokensButton.on('click', this.showSocialNetworksPopup);
         },
 
         showFacebookShareModal: function() {
-            console.log(this);
             FB.login(() => {
                 FB.ui(
                     {
