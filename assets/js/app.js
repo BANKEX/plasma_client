@@ -11496,6 +11496,14 @@ function openPopup(classname, event) {
 
 function showError(params) {
 
+	if (typeof params === 'string') {
+		params = {description: params}
+	}
+
+	if (!params.title) {
+		params.title = "Error"
+	}
+
 	$('body').addClass('popup-open');
 	$('.popup').removeClass('open');
 

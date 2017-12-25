@@ -19,31 +19,22 @@ const API_PREFIX = "/api/";
 
 const compose_plasma_tx_id = tx => [tx.blockNumber, tx.txNumberInBlock, tx.outputNumberInTransaction].join('|');
 
-const getTransactions = addr => $.getJSON(API_PREFIX + 'utxos/' + addr).then(res => {
-    if (res.error) {
-        showError({title: "Error", description: res.reason}); return;
-    }
-    return res.utxos;
-});
 
-const getHistoryDeposit = addr => $.getJSON(API_PREFIX + 'plasmaParent/allDeposits/' + addr).then(res => {
+const okay = (datafield) => (res) => {
     if (res.error) {
-        showError({title: "Error", description: res.reason}); return;
+        showError(res.reason);
+        return;
     }
-    return res.depositRecords;
-});
-const getHistoryWithdraw = addr => $.getJSON(API_PREFIX + 'plasmaParent/allWithdraws/' + addr).then(res => {
-    if (res.error) {
-        showError({title: "Error", description: res.reason}); return;
-    }
-    return res.withdrawRecords;
-});
-const getWithdraws = addr => $.getJSON(API_PREFIX + 'withdraws/' + addr).then(res => {
-    if (res.error) {
-        showError({title: "Error", description: res.reason}); return;
-    }
-    return res.txs;
-});
+    return res[datafield];
+}
+
+const getTransactions = addr => $.getJSON(API_PREFIX + 'utxos/' + addr).then(okay('utxos'));
+
+const getHistoryDeposit = addr => $.getJSON(API_PREFIX + 'plasmaParent/allDeposits/' + addr).then(okay('depositRecords'));
+
+const getHistoryWithdraw = addr => $.getJSON(API_PREFIX + 'plasmaParent/allWithdraws/' + addr).then(okay('withdrawRecords'));
+
+const getWithdraws = addr => $.getJSON(API_PREFIX + 'withdraws/' + addr).then(okay('txs'))
 
 const getTxInfo = tx => $.getJSON(API_PREFIX + `plasmaTX/${tx.blockNumber}/${tx.txNumberInBlock}`);
 
@@ -71,13 +62,7 @@ const prepareWithdrawProof = params => $.ajax({
     contentType: 'application/json',
     data: JSON.stringify(params),
     dataType: 'json'
-}).then(res => {
-    if (res.error) {
-        showError({title: "Error", description: res.reason});
-        throw null;
-    }
-    return res.proof;
-});
+}).then(okay('proof'));
 
 
 const scrollbar_params = {axis: "y", mouseWheel: {enable: true, preventDefault: true}};
@@ -217,7 +202,6 @@ const fetchData = addr => {
 
 
 };
-
 
 $(() => {
 
@@ -425,27 +409,57 @@ $(() => {
         });
 
 
+        $('.popup-transfer').on('_show', event => {
+            $('#transfer_amount').val(active_deposit.eth).focus().blur()
+        });
+
+
         $('.popup-transfer').on('click', '.popup__button', event => {
 
             const $popup = $(event.target).closest('.popup');
 
             const deposit = active_deposit;
 
-            const reciever = $popup.find('.popup__input-transfer input').val();
+            const reciever = $popup.find('#transfer_address').val();
+
+            const val = localWeb3.utils.toBN(localWeb3.utils.toWei($('#transfer_amount').val()))
 
             if (deposit === undefined || !localWeb3.utils.isAddress(reciever)) {
                 closePopup();
                 return;
             }
 
-            processTX({
-                "txType": 5,
-                "inputs": [getInput(deposit)],
-                "outputs": [{
-                    "to": reciever,
-                    "amount": deposit.bn.toString(10)
-                }]
-            });
+            // if (val.
+
+            if (val.eq(deposit.bn)) {
+
+                processTX({
+                    "txType": 5,
+                    "inputs": [getInput(deposit)],
+                    "outputs": [{
+                        "to": reciever,
+                        "amount": val.toString(10)
+                    }]
+                });
+            } else if (val.isNeg()) {
+                showError(`Cannot send negative amount of ETH`)
+            } else if (val.lt(deposit.bn)) {// split
+
+                processTX({
+                    "txType": 1,
+                    "inputs": [getInput(deposit)],
+                    "outputs": [{
+                        "to": reciever,
+                        "amount": val.toString(10)
+                    },{
+                        "to": address,
+                        "amount": deposit.bn.sub(val).toString(10)
+                    }]
+                });
+            } else {
+                showError(`Cannot send more then ${active_deposit.eth} ETH`)
+            }
+
 
         });
 
