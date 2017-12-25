@@ -247,6 +247,8 @@ $(() => {
         if (!address) {
             showError({title: "Metamask wallet is locked", description: "Please, unlock your wallet and refresh the page"})
 
+            $('.transactions__inner, .history__inner').addClass('disabled');
+
             return;
         }
 
