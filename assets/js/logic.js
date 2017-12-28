@@ -7,10 +7,10 @@ const plasma_host_address = "0xd8AC480331870c5764b5430F854926b1cfd1d8B1";
 const pug = require('pug');
 
 const initWeb3 = (callback) => localWeb3.eth.net.getId((error, id) => {
+
     if (id !== 4) {
-        showError({title: "Rinkeby test network is required", description: "Change network in Metamask and refresh the page"});
-        callback(error, null);
-        return;
+        showError({title: "Rinkeby test network is required", description: "Please switch Metamask to Rinkeby test network"});
+        return callback('wrong_network', null);
     }
     localWeb3.eth.getAccounts((error, res) => callback(error, res[0]));
 });
@@ -223,13 +223,15 @@ $(() => {
 
     initWeb3((err, address) => {
 
+        if (err === 'wrong_network') {return}
+
         if (err) {
             showError({title: "Metamask initialize error", description: err})
             return
         }
 
         if (!address) {
-            showError({title: "Metamask wallet is locked", description: "Please, unlock your wallet and refresh the page"})
+            showError({title: "Metamask wallet is locked", description: "Please unlock Metamask and set it to Rinkeby test network"})
 
             $('.transactions__inner, .history__inner').addClass('disabled');
 
@@ -239,8 +241,6 @@ $(() => {
         $('.address').css({visibility: 'visible'}).find('#user_address').html(address);
 
         const plasma_contract = new localWeb3.eth.Contract(plasma_abi, plasma_host_address, {from: address});
-
-        // console.log(address);
 
         fetchData(address);
 
@@ -516,7 +516,7 @@ $(() => {
             });
 
         });
-    });
+    })
 
 
 });

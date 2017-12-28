@@ -14,7 +14,7 @@ const app = connect();
 app.use(bodyParser.json());
 app.use('/api', (req, res) => {
 
-    const _path = req.originalUrl.split('/api/')[1];
+    const _path = req.originalUrl;
     const requestType = req.method;
 
     // console.log(requestType + ": " + config.plasma_host + _path);
