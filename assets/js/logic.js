@@ -211,6 +211,8 @@ $(() => {
         return
     }
 
+    // $('.transactions__inner, .history__inner').addClass('disabled');
+
     templates = {
         transactions: pug.compile($('script#transactions_list').text()),
         history_deposit: pug.compile($('script#history_list_deposit').text()),
@@ -233,9 +235,10 @@ $(() => {
         if (!address) {
             showError({title: "Metamask wallet is locked", description: "Please unlock Metamask and set it to Rinkeby test network"})
 
-            $('.transactions__inner, .history__inner').addClass('disabled');
-
             return;
+        } else {
+
+            $('.transactions__inner, .history__inner').removeClass('disabled');
         }
 
         $('.address').css({visibility: 'visible'}).find('#user_address').html(address);
