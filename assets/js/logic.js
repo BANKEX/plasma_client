@@ -218,7 +218,8 @@ $(() => {
         history_deposit: pug.compile($('script#history_list_deposit').text()),
         history_withdrawal: pug.compile($('script#history_list_withdrawal').text()),
         merge_options: pug.compile($('script#merge_options').text()),
-        incomlete_withdraw: pug.compile($('script#incomlete_withdraw').text())
+        incomlete_withdraw: pug.compile($('script#incomlete_withdraw').text()),
+        popup_tx: pug.compile($('script#popup_tx').text())
     };
 
     localWeb3 = new Web3(web3.currentProvider);
@@ -414,6 +415,8 @@ $(() => {
 
         $('.popup-transfer').on('_show', event => {
             $('#transfer_amount').val(active_deposit.eth).focus().blur()
+
+            $
         });
 
 

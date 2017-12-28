@@ -2925,3 +2925,8 @@ font-weight: 600;
   color: #fff!important;
   background: #0da9ff;
 }
+
+.popup_details {
+  font-size: 13px;
+  margin-bottom: 2em;
+}
