@@ -90,7 +90,7 @@
                         showError({title: "Error", description: res.message});
                     }
                 })
-                .catch(function(err) {
+                .error(function(err) {
                     showError({title: "Error", description: err.responseText});
                 });
 
