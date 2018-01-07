@@ -310,11 +310,12 @@ $(() => {
                     return;
                 }
                 const hash = res.txPersonalHash;
-
+                const rawTX = res.txHex;
                 // not error, just popup
                 showError({title: "Transaction sign", description: "Waiting for metamask confirm"})
 
-                localWeb3.eth.sign(hash, address, function (error, sigRes) {
+                // localWeb3.eth.sign(hash, address, function (error, sigRes) {
+                localWeb3.eth.personal.sign(rawTX, address, function (error, sigRes) {
                     requestData["signature"] = sigRes;
                     closePopup();
                     if (!error) {
