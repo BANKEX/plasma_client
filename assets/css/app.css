@@ -2815,7 +2815,7 @@ yx-axis
   height: 48px;
   line-height: 48px;
   margin-bottom: 16px;
-  padding: 0 24px 0 16px; }
+  padding: 2px 24px 0 16px; }
 .transaction:last-child {
   margin-bottom: 0; }
 .transaction__number, .transaction__date, .transaction__sum {
@@ -2873,15 +2873,15 @@ font-weight: 600;
 }
 
 .finish_withdrawal {
-  height: 24px;
-  top: 12px;
-  margin-left: 0;
+  height: 30px;
+  top: 0px;
+  margin-left: 150px;
   line-height: 12px;
-  font-size: 12px;
-  padding: 4px 40px;
+  font-size: 16px;
+  padding: 8px 40px;
   text-align: center;
   right: 0;
-  left: auto;
+  left: 0%;
   margin-right: 2em;
 }
 
@@ -2929,4 +2929,19 @@ font-weight: 600;
 .popup_details {
   font-size: 13px;
   margin-bottom: 2em;
+}
+
+
+.anno .anno-inner .anno-btn-container button.anno-btn {
+  border: 1px solid #0da9ff;
+  border-radius: 24px;
+  color: #0da9ff;
+  transition: all 0.5s;
+  background-color: white;
+  text-align: center;
+}
+
+.anno .anno-inner .anno-btn-container button.anno-btn:hover {
+  color: white;
+  background-color: #0da9ff;
 }
