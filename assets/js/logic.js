@@ -21,9 +21,12 @@ const compose_plasma_tx_id = tx => [tx.blockNumber, tx.txNumberInBlock, tx.outpu
 
 
 const okay = (datafield) => (res) => {
+
+    // console.log(res);
+
     if (res.error) {
         showError(res.reason);
-        return;
+        return $.Deferred().reject();
     }
     return res[datafield];
 }
@@ -144,8 +147,12 @@ const fetchData = addr => {
     getTransactions(addr).then(utxos => {
 
         if (utxos.length === 0) {
+
+            $('.transactions__list ._container').html('')
+
             $('.no_transactions').show();
             $('.transactions__sort ').addClass('disabled');
+
         } else {
 
             $('.no_transactions').hide();
@@ -176,7 +183,7 @@ const fetchData = addr => {
     getHistoryWithdraw(addr).then(list => {
 
         list.forEach(t => {
-            t.index = [t.blockNumber, t.txNumberInBlock, t.index].join('|');
+            t._index = [t.blockNumber, t.txNumberInBlock].join('|');
             t.eth = localWeb3.utils.fromWei(t.amount);
         });
 
@@ -298,6 +305,7 @@ $(() => {
         const tx_sign_callback = (callback) => function (res, status) {
             if (status !== "success" || res.error) {
                 showError({title: "Transaction error", description: "Invalid transaction signature"});
+                console.log(res);
             }
             if (callback !== undefined) {callback()}
         };
@@ -483,14 +491,14 @@ $(() => {
                 "inputs": [getInput(active_deposit)]
             }, () => {
 
-                if (!localStorage.widthdraw_hint !== true) {
-                    localStorage.widthdraw_hint = true
+                if (localStorage.show_widthdraw_hint != 'shown') {
+                    localStorage.show_widthdraw_hint  = 'shown'
 
                     const a = new Anno({
                       target  : '#inc-withdrawals-title',
                       position: 'center-top',
                       content : "Now, to finish transaction, confirm withdrawal in this list",
-                      buttons : []
+                      buttons : [{text:"ok", className: "anno_close_button"}]
                     })
 
                     a.show()
@@ -502,25 +510,29 @@ $(() => {
 
             const withdraw = all_withdraws[$(event.target).closest('.transaction').index()];
 
+
             prepareWithdrawProof({
                 blockNumber: withdraw.blockNumber,
                 txNumber: withdraw.txNumberInBlock
             }).then(p => {
 
                 plasma_contract.methods
-                    .makeWithdrawExpress(p.blockNumber, p.txNumber, p.tx, p.merkleProof)
-                    .send({from: address}).then(res => {
+                .makeWithdrawExpress(p.blockNumber, p.txNumber, p.tx, p.merkleProof)
+                .send({from: address}).then(res => {
+
+                    closePopup();
 
                     console.log(res.events);
                     // TODO: wodho "eth network is mining" message
 
-                }).catch((e)=>{
+                }).catch(e => {
 
-                    showError({title: "Smart contract returned an error", description: e})
+                    showError({title: "Smart contract returned an error", description: e.toString().split(':').pop()})
 
+                    console.log(e);
 
                 });
-            });
+            })
 
         });
 

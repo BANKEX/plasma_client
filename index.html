@@ -376,7 +376,7 @@ each t in transactions
 <script type="template/pug" id="history_list_withdrawal">
 each t in transactions
     .transaction
-        .transaction__number=t.index
+        .transaction__number=t._index
         .transaction__sum=t.eth + " ETH"
         .transaction__date=t.beneficiary
 </script>
@@ -414,7 +414,7 @@ each t in txs
 <script src="/vendor/anno.js"></script>
 
 <script src="/assets/js/logic.js?v2"></script>
-  <script src="/assets/js/get_test_tokens.js?v2"></script>
+<script src="/assets/js/get_test_tokens.js?v2"></script>
 
 
 
