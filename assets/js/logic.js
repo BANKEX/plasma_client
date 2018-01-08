@@ -183,7 +183,7 @@ const fetchData = addr => {
     getHistoryWithdraw(addr).then(list => {
 
         list.forEach(t => {
-            t._index = [t.blockNumber, t.txNumberInBlock].join('|');
+            t._number = [t.blockNumber, t.txNumberInBlock, t.outputNumberInTX].join('|');
             t.eth = localWeb3.utils.fromWei(t.amount);
         });
 

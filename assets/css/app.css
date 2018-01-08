@@ -2945,3 +2945,17 @@ font-weight: 600;
   color: white;
   background-color: #0da9ff;
 }
+
+
+#withdrawals .transaction .transaction__index {
+  width: 180px;
+  display: inline-block;
+  font-size: 14px;
+  text-align: right;
+}
+#withdrawals .transaction .transaction__number {
+  width: 110px;
+}
+#withdrawals .transaction .transaction__sum {
+  width: 160px;
+}

@@ -376,7 +376,8 @@ each t in transactions
 <script type="template/pug" id="history_list_withdrawal">
 each t in transactions
     .transaction
-        .transaction__number=t._index
+        .transaction__number=t._number
+        .transaction__index=t.index
         .transaction__sum=t.eth + " ETH"
         .transaction__date=t.beneficiary
 </script>
