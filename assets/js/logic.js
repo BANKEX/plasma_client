@@ -8,10 +8,10 @@ const pug = require('pug');
 
 const initWeb3 = (callback) => localWeb3.eth.net.getId((error, id) => {
 
-    if (id !== 4) {
-        showError({title: "Rinkeby test network is required", description: "Please switch Metamask to Rinkeby test network"});
-        return callback('wrong_network', null);
-    }
+    // if (id !== 4) {
+    //     showError({title: "Rinkeby test network is required", description: "Please switch Metamask to Rinkeby test network"});
+    //     return callback('wrong_network', null);
+    // }
     localWeb3.eth.getAccounts((error, res) => callback(error, res[0]));
 });
 
@@ -42,7 +42,7 @@ const getWithdraws = addr => $.getJSON(API_PREFIX + 'withdraws/' + addr).then(ok
 const getTxInfo = tx => $.getJSON(API_PREFIX + `plasmaTX/${tx.blockNumber}/${tx.txNumberInBlock}`);
 
 const sendTXforSerialization = (req, cb) => $.ajax({
-    url: API_PREFIX + 'createTX',
+    url: API_PREFIX + 'createRLPTX',
     type: "POST",
     data: JSON.stringify(req),
     contentType: "application/json; charset=utf-8",
@@ -51,7 +51,7 @@ const sendTXforSerialization = (req, cb) => $.ajax({
 });
 
 const sendSignedTX = (req, cb) => $.ajax({
-    url: API_PREFIX + 'sendSignedTX',
+    url: API_PREFIX + 'sendSignedRLPTX',
     type: "POST",
     data: JSON.stringify(req),
     contentType: "application/json; charset=utf-8",
@@ -449,7 +449,7 @@ $(() => {
             if (val.eq(deposit.bn)) {
 
                 processTX({
-                    "txType": 5,
+                    "txType": 1,
                     "inputs": [getInput(deposit)],
                     "outputs": [{
                         "to": reciever,

@@ -14,7 +14,7 @@ const app = connect();
 app.use(bodyParser.json());
 app.use('/api', (req, res) => {
 
-    const _path = req.originalUrl;
+    const _path = req.originalUrl.substr(4);
     const requestType = req.method;
 
     // console.log(requestType + ": " + config.plasma_host + _path);
@@ -33,6 +33,6 @@ app.use('/api', (req, res) => {
 });
 
 
-app.use(serveStatic(__dirname)).listen(8080, function(){
-    console.log('Server running on 8080...');
+app.use(serveStatic(__dirname)).listen(9000, function(){
+    console.log('Server running on 9000...');
 });
